@@ -49,7 +49,6 @@
     <Analyzer Include="/Applications/Unity/Hub/Editor/6000.3.23f1/Unity.app/Contents/Resources/BuildPipeline/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets/Assets/Scripts/PlayerScripts/States/PlayerState.cs" />
     <Compile Include="Assets/Assets/PlayerInputActions.cs" />
     <Compile Include="Assets/Assets/Scripts/PlayerScripts/MovementScript.cs" />
     <Compile Include="Assets/Assets/Scripts/PlayerScripts/PlayerController.cs" />
