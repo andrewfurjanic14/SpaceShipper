@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4969933876540889542}
   - component: {fileID: 6897855040778612795}
   - component: {fileID: 8881427715987600820}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,6 +90,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3495821648627910872
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6235656291481504494}
+  m_Layer: 0
+  m_Name: Muzzle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6235656291481504494
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3495821648627910872}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.064, z: 1.062}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7352037256802799010}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5802900702020261505
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,7 +133,7 @@ GameObject:
   - component: {fileID: 7266463776380785675}
   - component: {fileID: 5819957524692082490}
   - component: {fileID: 6556766938734611538}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -240,9 +271,11 @@ GameObject:
   - component: {fileID: 866869789265684293}
   - component: {fileID: 7164922875491153863}
   - component: {fileID: 7306505762539681633}
-  m_Layer: 0
+  - component: {fileID: 5311258337779331164}
+  - component: {fileID: 6668554112966560883}
+  m_Layer: 7
   m_Name: Player_M2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -262,6 +295,7 @@ Transform:
   m_Children:
   - {fileID: 4969933876540889542}
   - {fileID: 6045211555347625006}
+  - {fileID: 6235656291481504494}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &6582278055369906607
@@ -280,7 +314,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -288,9 +322,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &866869789265684293
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -326,6 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72220aa9e3f434a7fa97aa5a0869a429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  _weapon: {fileID: 5311258337779331164}
   _dashMeter: {fileID: 0}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
@@ -351,3 +386,45 @@ MonoBehaviour:
   _maxDashEnergy: 100
   _dashColor: {r: 0, g: 1, b: 1, a: 1}
   _dashFailColor: {r: 1, g: 0, b: 0, a: 1}
+  IsDashing: 0
+--- !u!114 &5311258337779331164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Weapon
+  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
+  _muzzles:
+  - {fileID: 6235656291481504494}
+  _useShipForward: 1
+  _fireRate: 5
+  _projectileSpeed: 100
+  _damage: 10
+--- !u!114 &6668554112966560883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
+  controlType: 0
+  health: 100
+  teamID: 0
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  impactDamageMultiplier: 0.75

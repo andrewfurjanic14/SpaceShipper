@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -10,10 +11,20 @@ public class GravField : MonoBehaviour
     public float MassConst = 39860f;
 
     private float TotalTime = 0.0f;
-    public float TimeBetweenUpdates = 5.0f;
+    public float TimeBetweenUpdates = 1.0f;
     
     List<Rigidbody> GravRigidbodies = new List<Rigidbody>();
-    
+
+    private void Awake()
+    {
+        if (GetComponent<Rigidbody>() == null)
+        {
+            Rigidbody rb = gameObject.AddComponent<Rigidbody>();
+            rb.useGravity = false;
+            rb.mass = 100000f; // Set a high mass to make it effectively immovable
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
@@ -29,7 +40,7 @@ public class GravField : MonoBehaviour
         foreach (Collider col in collidersInRange)
         {
             Rigidbody rb = col.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (rb != null && !GravRigidbodies.Contains(rb))
             {
                 GravRigidbodies.Add(rb);
             }
@@ -66,6 +77,14 @@ public class GravField : MonoBehaviour
             
             // Apply the force to the rigidbody
             r.AddForce(direction * forceMagnitude, ForceMode.Acceleration);
+        }
+    }
+    
+    public void RemoveObjectFromGravField(Rigidbody r)
+    {
+        if (GravRigidbodies.Contains(r))
+        {
+            GravRigidbodies.Remove(r);
         }
     }
     

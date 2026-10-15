@@ -18,6 +18,8 @@ public class MovementScript : MonoBehaviour
     [SerializeField] private Color _dashColor = Color.cyan;
     [SerializeField] private Color _dashFailColor = Color.red;
 
+    public bool IsDashing = false; 
+
     // defaults
     private Color _defaultColor;
 
@@ -69,6 +71,7 @@ public class MovementScript : MonoBehaviour
             _rb.AddForce(transform.forward * _dashForce, ForceMode.Impulse);
             _shipRenderer.material.color = _dashColor;
             _dashEnergy -= _dashCost;
+            IsDashing = true;
         }
         else
         {
@@ -81,6 +84,7 @@ public class MovementScript : MonoBehaviour
     public void EndDash()
     {
         _shipRenderer.material.color = _defaultColor;
+        IsDashing = false;
     }
     
     public void Brake()
