@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     // Scripts
     private MovementScript _movementScript;
+    [SerializeField] private Weapon _weapon;
+
 
     // UI
     [SerializeField] private Slider _dashMeter;
@@ -16,6 +18,8 @@ public class PlayerController : MonoBehaviour
     private bool _isForwardThrusting;
     private bool _isReverseThrusting;
     private bool _isBraking;
+    private bool _isShooting;
+
     private Vector2 _movementInput;
 
  
@@ -25,6 +29,9 @@ public class PlayerController : MonoBehaviour
         _inputSystem = new PlayerInputActions();
 
         _movementScript = GetComponent<MovementScript>();
+
+        if (_weapon == null)
+            _weapon = GetComponentInChildren<Weapon>();
     }
 
     private void OnEnable()
@@ -35,6 +42,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnDisable()
     {
+        _inputSystem.Player.Dash.performed -= _movementScript.Dash;
         _inputSystem.Player.Disable();
     }
     void Start()
@@ -49,6 +57,10 @@ public class PlayerController : MonoBehaviour
         _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
+        _isShooting = _inputSystem.Player.Shoot.IsPressed(); // hold to fire
+
+        if (_isShooting && _weapon != null)
+            _weapon.TryFire();
 
         // update UI
         _dashMeter.value = _movementScript.DashPercent;
