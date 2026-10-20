@@ -477,6 +477,7 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  impactDamageMultiplier: 0.1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -940,6 +941,7 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  impactDamageMultiplier: 0.1
 --- !u!65 &1394699189
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1046,7 +1048,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   target: {fileID: 0}
-  moveSpeed: 8
+  moveSpeed: 3
   turnSpeed: 180
   stopDistance: 3
 --- !u!54 &1394699194
@@ -1119,6 +1121,7 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  impactDamageMultiplier: 0.1
 --- !u!65 &1422683181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1225,7 +1228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   target: {fileID: 0}
-  moveSpeed: 8
+  moveSpeed: 3
   turnSpeed: 180
   stopDistance: 3
 --- !u!54 &1422683186
@@ -1336,6 +1339,7 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
+  impactDamageMultiplier: 0.1
 --- !u!65 &1735836814
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1443,7 +1447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   target: {fileID: 0}
-  moveSpeed: 8
+  moveSpeed: 3
   turnSpeed: 180
   stopDistance: 3
 --- !u!54 &1735836819

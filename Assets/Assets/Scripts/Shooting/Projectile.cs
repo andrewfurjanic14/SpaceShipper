@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float _lifetime = 4f;
     private Rigidbody _rb;
-    private float _damage;
+    public float Damage;
     private uint _teamID;
     private Transform _ownerRoot;
 
@@ -16,11 +16,12 @@ public class Projectile : MonoBehaviour
         _rb.useGravity = false;
         _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         GetComponent<Collider>().isTrigger = true;
+        tag = "Projectile";
     }
 
     public void Initialize(float damage, float speed, uint teamID, Transform ownerRoot)
     {
-        _damage = damage;
+        Damage = damage;
         _teamID = teamID;
         _ownerRoot = ownerRoot;
         _rb.linearVelocity = transform.forward * speed;
@@ -39,7 +40,7 @@ public class Projectile : MonoBehaviour
         {
             if (target.TeamID == _teamID) return;
 
-            target.TakeDamage(_damage);
+            target.TakeDamage(Damage);
         }
         Destroy(gameObject);
     }
