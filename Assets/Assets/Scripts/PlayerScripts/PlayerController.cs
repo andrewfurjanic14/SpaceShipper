@@ -44,6 +44,8 @@ public class PlayerController : MonoBehaviour
     {
         _inputSystem.Player.Dash.performed -= _movementScript.Dash;
         _inputSystem.Player.Disable();
+        if (_weapon != null)
+            _weapon.SetTrajectoryVisible(false);
     }
     void Start()
     {
@@ -58,6 +60,9 @@ public class PlayerController : MonoBehaviour
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
         _isShooting = _inputSystem.Player.Shoot.IsPressed(); // hold to fire
+
+        if (_weapon != null)
+            _weapon.SetTrajectoryVisible(_isShooting);
 
         if (_isShooting && _weapon != null)
             _weapon.TryFire();
