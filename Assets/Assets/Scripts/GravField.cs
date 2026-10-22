@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class GravField : MonoBehaviour
 {
-    
-    private Transform ParentTransform; 
     public float detectionRadius = 5f;
     public LayerMask targetLayer;
     public float MassConst = 39860f;
@@ -28,7 +26,6 @@ public class GravField : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        ParentTransform = GetComponent<Transform>();
         gameObject.tag = "Terrestrial";
         FindObjectsInRange();
     }
