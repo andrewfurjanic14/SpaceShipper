@@ -23,14 +23,15 @@ public class EnemyMovement : MonoBehaviour
 
     private void Start()
     {
-        if (target == null)
+        if(Random.value < 0.5f)
+        {
+            target = GameObject.Find("cargoship").transform;
+        } else
         {
             PlayerController player = FindFirstObjectByType<PlayerController>();
-            if (player != null)
-                target = player.transform;
-            else
-                Debug.LogWarning("no target player found: movement script");
+            target = player.transform;
         }
+
     }
 
     private void FixedUpdate()

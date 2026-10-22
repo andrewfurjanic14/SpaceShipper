@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMovement))]
+
 public class EnemyShooting : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
