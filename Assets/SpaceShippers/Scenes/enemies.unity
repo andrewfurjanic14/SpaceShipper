@@ -119,37 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &73709681
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 73709682}
-  m_Layer: 0
-  m_Name: Muzzle
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &73709682
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 73709681}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.064, z: 1.062}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 672962310}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &78884806
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae0d7c2cd8f24479fdb4fc0e164ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShooting
-  weapon: {fileID: 0}
+  _shooter: {fileID: 0}
   fireRange: 40
   aimTolerance: 10
 --- !u!114 &78884808
@@ -201,15 +170,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
+  _weapon: {fileID: 0}
+  _trajectoryPreview: {fileID: 0}
   _muzzles: []
+  _ship: {fileID: 0}
   _useShipForward: 1
-  _fireRate: 1
-  _projectileSpeed: 30
-  _damage: 10
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
 --- !u!114 &78884809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,8 +570,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 0}
+  m_AnchoredPosition: {x: 4.5000005, y: 0}
+  m_SizeDelta: {x: 19, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &533846358
 MonoBehaviour:
@@ -621,7 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.022917405, g: 0.9716981, b: 0.736834, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -677,60 +642,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 933125661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &672962305 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7314602444589515209, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-  m_PrefabInstance: {fileID: 8981446186155597506}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &672962310 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7352037256802799010, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-  m_PrefabInstance: {fileID: 8981446186155597506}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &672962311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 672962305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
-  _muzzles:
-  - {fileID: 73709682}
-  _useShipForward: 1
-  _fireRate: 5
-  _projectileSpeed: 60
-  _damage: 35
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
---- !u!114 &672962316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 672962305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 0
-  health: 100
-  teamID: 0
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,32 +691,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &915586993 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1811670248537264850, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-  m_PrefabInstance: {fileID: 8981446186155597506}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &915586995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 915586993}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
-  _muzzles: []
-  _useShipForward: 1
-  _fireRate: 5
-  _projectileSpeed: 60
-  _damage: 10
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
 --- !u!1 &933125652
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,7 +727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae0d7c2cd8f24479fdb4fc0e164ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShooting
-  weapon: {fileID: 0}
+  _shooter: {fileID: 0}
   fireRange: 40
   aimTolerance: 10
 --- !u!114 &933125654
@@ -857,15 +742,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
+  _weapon: {fileID: 0}
+  _trajectoryPreview: {fileID: 0}
   _muzzles: []
+  _ship: {fileID: 0}
   _useShipForward: 1
-  _fireRate: 1
-  _projectileSpeed: 30
-  _damage: 10
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
 --- !u!114 &933125655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1198,8 +1079,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -270, y: 150}
+  m_SizeDelta: {x: 160, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1048116919
 MonoBehaviour:
@@ -1222,7 +1103,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0, g: 0.990566, b: 0.84761506, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1240,7 +1121,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1847939913}
   m_FillRect: {fileID: 533846357}
   m_HandleRect: {fileID: 1847939912}
@@ -1288,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae0d7c2cd8f24479fdb4fc0e164ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShooting
-  weapon: {fileID: 0}
+  _shooter: {fileID: 0}
   fireRange: 40
   aimTolerance: 10
 --- !u!114 &1054182337
@@ -1303,15 +1184,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
+  _weapon: {fileID: 0}
+  _trajectoryPreview: {fileID: 0}
   _muzzles: []
+  _ship: {fileID: 0}
   _useShipForward: 1
-  _fireRate: 1
-  _projectileSpeed: 30
-  _damage: 10
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
 --- !u!114 &1054182338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1535,8 +1412,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: -20, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1135512696
 GameObject:
@@ -1775,7 +1652,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1446887042
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1991,7 +1868,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dae0d7c2cd8f24479fdb4fc0e164ab6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyShooting
-  weapon: {fileID: 0}
+  _shooter: {fileID: 0}
   fireRange: 40
   aimTolerance: 10
 --- !u!114 &1735836821
@@ -2006,15 +1883,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _projectilePrefab: {fileID: 2698668791010809369, guid: f7a497e6eea2da54ba75d5d80579ac52, type: 3}
+  _weapon: {fileID: 0}
+  _trajectoryPreview: {fileID: 0}
   _muzzles: []
+  _ship: {fileID: 0}
   _useShipForward: 1
-  _fireRate: 1
-  _projectileSpeed: 30
-  _damage: 10
-  _trajectoryLength: 100
-  _trajectoryWidth: 0.03
-  _trajectoryColor: {r: 0.2, g: 0.9, b: 1, a: 0.4}
 --- !u!1 &1847939911
 GameObject:
   m_ObjectHideFlags: 0
@@ -2032,7 +1905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1847939912
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2059,7 +1932,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847939911}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -2231,14 +2104,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6668554112966560883, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      propertyPath: health
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 7164922875491153863, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      propertyPath: _weapon
-      value: 
-      objectReference: {fileID: 915586995}
     - target: {fileID: 7164922875491153863, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: _dashMeter
       value: 
@@ -2289,20 +2154,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 7352037256802799010, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 73709682}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7314602444589515209, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 672962311}
-    - targetCorrespondingSourceObject: {fileID: 7314602444589515209, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 672962316}
-    - targetCorrespondingSourceObject: {fileID: 1811670248537264850, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 915586995}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

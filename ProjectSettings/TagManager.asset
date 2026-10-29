@@ -16,10 +16,10 @@ TagManager:
   - Terrestrial
   - Player
   - Enemy
-  - Projectile
+  - PlayerProjectile
+  - EnemyProjectile
   - GravObj
-  - 
-  - 
+  - CargoShip
   - 
   - 
   - 

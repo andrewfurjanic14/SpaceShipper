@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Scripts
     private PlayerMovement _playerMovement;
-    [SerializeField] private Shooter _weapon;
+    [SerializeField] private Shooter _shooter;
     #endregion
 
     #region UI
@@ -32,27 +32,26 @@ public class PlayerController : MonoBehaviour
 
         _playerMovement = GetComponent<PlayerMovement>();
 
-        if (_weapon == null)
-            _weapon = GetComponent<Shooter>();
+        if (_shooter == null)
+            _shooter = GetComponent<Shooter>();
     }
 
     private void OnEnable()
     {
         _inputSystem.Player.Dash.performed += _playerMovement.Dash;
-
+        _inputSystem.Player.Shoot.started  += OnShootStarted;
+        _inputSystem.Player.Shoot.canceled += OnShootCanceled;
         _inputSystem.Player.Enable();
     }
     private void OnDisable()
     {
         _inputSystem.Player.Dash.performed -= _playerMovement.Dash;
+        _inputSystem.Player.Shoot.started  -= OnShootStarted;
+        _inputSystem.Player.Shoot.canceled -= OnShootCanceled;
         _inputSystem.Player.Disable();
 
-        if (_weapon != null)
-            _weapon.SetTrajectoryVisible(false);
-    }
-    void Start()
-    {
-        
+        if (_shooter != null)
+            _shooter.StopFiring();
     }
 
     void Update()
@@ -63,12 +62,6 @@ public class PlayerController : MonoBehaviour
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
         _isShooting = _inputSystem.Player.Shoot.IsPressed(); // hold to fire
-
-        if (_weapon != null)
-            _weapon.SetTrajectoryVisible(_isShooting);
-
-        if (_isShooting && _weapon != null)
-            _weapon.TryFire();
 
         // update UI
         _dashMeter.value = _playerMovement.DashPercent;
@@ -92,4 +85,6 @@ public class PlayerController : MonoBehaviour
             _playerMovement.ReverseThrust();
         }
     }
+    private void OnShootStarted(InputAction.CallbackContext ctx) => _shooter.StartFiring();
+    private void OnShootCanceled(InputAction.CallbackContext ctx) => _shooter.StopFiring();
 }
