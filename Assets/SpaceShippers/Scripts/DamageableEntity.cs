@@ -17,7 +17,7 @@ public class DamageableEntity : MonoBehaviour
     public UnityEvent<float> OnHealthChanged;
     public UnityEvent OnDeath;
 
-    private MovementScript MovementController;
+    private PlayerMovement MovementController;
 
     public EntityControlType ControlType => controlType;
     public uint TeamID => teamID;
@@ -28,7 +28,7 @@ public class DamageableEntity : MonoBehaviour
 
     private void Awake()
     {
-        MovementController = GetComponent<MovementScript>();
+        MovementController = GetComponent<PlayerMovement>();
     }
 
     public void TakeDamage(float amount)
