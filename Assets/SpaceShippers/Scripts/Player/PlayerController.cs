@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Scripts
     private PlayerMovement _playerMovement;
-    [SerializeField] private Weapon _weapon;
+    [SerializeField] private Shooter _weapon;
     #endregion
 
     #region UI
@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
         _playerMovement = GetComponent<PlayerMovement>();
 
         if (_weapon == null)
-            _weapon = GetComponent<Weapon>();
+            _weapon = GetComponent<Shooter>();
     }
 
     private void OnEnable()

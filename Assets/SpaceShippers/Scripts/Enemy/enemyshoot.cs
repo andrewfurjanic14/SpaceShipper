@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyMovement))]
 public class EnemyShooting : MonoBehaviour
 {
-    [SerializeField] private Weapon weapon;
+    [SerializeField] private Shooter weapon;
     [SerializeField] private float fireRange = 40f;
     [SerializeField] private float aimTolerance = 10f; //degrees
     private EnemyMovement movement;
@@ -13,7 +13,7 @@ public class EnemyShooting : MonoBehaviour
         movement = GetComponent<EnemyMovement>();
 
         if (weapon == null)
-            weapon = GetComponentInChildren<Weapon>();
+            weapon = GetComponentInChildren<Shooter>();
     }
 
     private void Update()
