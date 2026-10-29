@@ -2,48 +2,51 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(MovementScript))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerController : MonoBehaviour
 {
-    // Scripts
-    private MovementScript _movementScript;
+    #region Scripts
+    private PlayerMovement _playerMovement;
     [SerializeField] private Weapon _weapon;
+    #endregion
 
-
-    // UI
+    #region UI
     [SerializeField] private Slider _dashMeter;
+    #endregion
 
-    // Movement System
-    private PlayerInputActions _inputSystem;
+    #region States
     private bool _isForwardThrusting;
     private bool _isReverseThrusting;
     private bool _isBraking;
     private bool _isShooting;
+    #endregion
 
+    #region Input Handling
+    private PlayerInputActions _inputSystem;
     private Vector2 _movementInput;
-
- 
+    #endregion
 
     private void Awake()
     {
         _inputSystem = new PlayerInputActions();
 
-        _movementScript = GetComponent<MovementScript>();
+        _playerMovement = GetComponent<PlayerMovement>();
 
         if (_weapon == null)
-            _weapon = GetComponentInChildren<Weapon>();
+            _weapon = GetComponent<Weapon>();
     }
 
     private void OnEnable()
     {
-        _inputSystem.Player.Dash.performed += _movementScript.Dash;
+        _inputSystem.Player.Dash.performed += _playerMovement.Dash;
 
         _inputSystem.Player.Enable();
     }
     private void OnDisable()
     {
-        _inputSystem.Player.Dash.performed -= _movementScript.Dash;
+        _inputSystem.Player.Dash.performed -= _playerMovement.Dash;
         _inputSystem.Player.Disable();
+
         if (_weapon != null)
             _weapon.SetTrajectoryVisible(false);
     }
@@ -68,23 +71,25 @@ public class PlayerController : MonoBehaviour
             _weapon.TryFire();
 
         // update UI
-        _dashMeter.value = _movementScript.DashPercent;
+        _dashMeter.value = _playerMovement.DashPercent;
     }
 
     private void FixedUpdate()
     {
         // movement
-        _movementScript.Steer(_movementInput);
+        _playerMovement.Steer(_movementInput);
 
         if (_isBraking)
         {
-            _movementScript.Brake();
-        } else
+            _playerMovement.Brake();
+        } 
+        else if (_isForwardThrusting)
         {
-            if (_isForwardThrusting)
-            _movementScript.ForwardThrust();
-            if (_isReverseThrusting)
-            _movementScript.ReverseThrust();
+            _playerMovement.ForwardThrust();
+        }
+        else if (_isReverseThrusting)
+        {
+            _playerMovement.ReverseThrust();
         }
     }
 }

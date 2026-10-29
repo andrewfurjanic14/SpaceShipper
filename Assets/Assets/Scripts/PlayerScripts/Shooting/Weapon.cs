@@ -26,7 +26,7 @@ public class Weapon : MonoBehaviour
     {
         _owner = GetComponentInParent<DamageableEntity>();
 
-        var movement = GetComponentInParent<MovementScript>();
+        var movement = GetComponentInParent<PlayerMovement>();
         _ship = movement != null ? movement.transform : transform.root;
 
         if (_muzzles == null || _muzzles.Length == 0)
@@ -125,13 +125,13 @@ public class Weapon : MonoBehaviour
 
     public bool TryFire()
     {
-        if (_projectilePrefab == null)
+        // NO fire
+        if (_projectilePrefab == null || Time.time < _nextFireTime)
         {
             return false;
         }
-
-        if (Time.time < _nextFireTime) return false;
-        _nextFireTime = Time.time + 1f / _fireRate;
+            
+        _nextFireTime = Time.time + 1f / _fireRate; 
 
         uint team = _owner != null ? _owner.TeamID : 0;
 

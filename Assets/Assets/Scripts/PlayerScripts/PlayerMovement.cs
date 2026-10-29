@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-public class MovementScript : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     // components
     private Rigidbody _rb;
