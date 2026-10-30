@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
+using SpaceShippers.Scripts.PCG;
 
 [CustomEditor(typeof(ProceduralSphere), true)]
 public class ProceduralSphereEditor : Editor
