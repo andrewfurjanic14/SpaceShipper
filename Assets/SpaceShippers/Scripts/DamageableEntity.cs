@@ -60,7 +60,12 @@ public class DamageableEntity : MonoBehaviour
 
         if (controlType == EntityControlType.EnemyControlled)
         {
-            Destroy(gameObject);
+            if (gameObject.layer == LayerMask.NameToLayer("Debris"))
+            {
+                Destroy(gameObject);
+                return;
+            }
+            gameObject.layer = LayerMask.NameToLayer("Debris");
         }
         else
         {

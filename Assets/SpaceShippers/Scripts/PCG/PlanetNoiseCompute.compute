@@ -1,0 +1,108 @@
+﻿#pragma kernel CS_Vertices
+#pragma kernel CS_Triangles
+
+struct VertexData {
+    float3 position;
+    float3 normal;
+    float2 uv;
+};
+
+RWStructuredBuffer<VertexData> vertexBuffer;
+RWStructuredBuffer<int> triangleBuffer;
+
+float radius;
+int longitudeSegments;
+int latitudeSegments;
+float noiseScale;
+float noiseStrength;
+float noiseOffset;
+int octaves;
+float lacunarity;
+float persistence;
+int flattenValleys;
+
+float hash(float3 p) {
+    p = frac(p * 0.3183099 + 0.1);
+    p *= 17.0;
+    return frac(p.x * p.y * p.z * (p.x + p.y + p.z));
+}
+
+float noise3D(float3 x) {
+    float3 i = floor(x);
+    float3 f = frac(x);
+    f = f * f * (3.0 - 2.0 * f);
+    
+    return lerp(lerp(lerp(hash(i + float3(0,0,0)), hash(i + float3(1,0,0)), f.x),
+                     lerp(hash(i + float3(0,1,0)), hash(i + float3(1,1,0)), f.x), f.y),
+                lerp(lerp(hash(i + float3(0,0,1)), hash(i + float3(1,0,1)), f.x),
+                     lerp(hash(i + float3(0,1,1)), hash(i + float3(1,1,1)), f.x), f.y), f.z);
+}
+
+[numthreads(256, 1, 1)]
+void CS_Vertices (uint3 id : SV_DispatchThreadID)
+{
+    int totalVertices = (longitudeSegments + 1) * (latitudeSegments + 1);
+    if ((int)id.x >= totalVertices) return;
+
+    int lat = id.x / (longitudeSegments + 1);
+    int lon = id.x % (longitudeSegments + 1);
+
+    float latAngle = 3.14159265 * lat / latitudeSegments;
+    float sinLat = sin(latAngle);
+    float cosLat = cos(latAngle);
+
+    float lonAngle = 2.0 * 3.14159265 * lon / longitudeSegments;
+    float sinLon = sin(lonAngle);
+    float cosLon = cos(lonAngle);
+
+    float3 normal = float3(cosLon * sinLat, cosLat, sinLon * sinLat);
+    
+    float totalNoise = 0.0;
+    float amplitude = 1.0;
+    float frequency = noiseScale;
+    float maxVal = 0.0;
+
+    for (int i = 0; i < octaves; i++) {
+        float3 samplePos = (normal + noiseOffset) * frequency;
+        totalNoise += (noise3D(samplePos) - 0.5) * amplitude;
+        maxVal += 0.5 * amplitude;
+        frequency *= lacunarity;
+        amplitude *= persistence;
+    }
+
+    if (maxVal > 0.0) totalNoise = (totalNoise / maxVal) * 0.5;
+    if (flattenValleys != 0 && totalNoise < 0.0) totalNoise = 0.0;
+
+    float finalElevation = radius + (totalNoise * noiseStrength);
+    
+    vertexBuffer[id.x].position = normal * finalElevation;
+    vertexBuffer[id.x].normal = normal; 
+    vertexBuffer[id.x].uv = float2((float)lon / longitudeSegments, (float)lat / latitudeSegments);
+}
+
+[numthreads(256, 1, 1)]
+void CS_Triangles (uint3 id : SV_DispatchThreadID)
+{
+    int totalFaces = longitudeSegments * latitudeSegments;
+    if ((int)id.x >= totalFaces) return;
+
+    int lat = id.x / longitudeSegments;
+    int lon = id.x % longitudeSegments;
+
+    int current = lat * (longitudeSegments + 1) + lon;
+    int next = current + 1;
+    int bottomCurrent = current + (longitudeSegments + 1);
+    int bottomNext = bottomCurrent + 1;
+
+    int triIndex = id.x * 6;
+
+    // Triangle 1
+    triangleBuffer[triIndex]     = current;
+    triangleBuffer[triIndex + 1] = next;          
+    triangleBuffer[triIndex + 2] = bottomCurrent;  
+
+    // Triangle 2
+    triangleBuffer[triIndex + 3] = next;
+    triangleBuffer[triIndex + 4] = bottomNext;     
+    triangleBuffer[triIndex + 5] = bottomCurrent;  
+}
