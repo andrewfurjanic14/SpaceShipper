@@ -34,7 +34,7 @@ public class Projectile : MonoBehaviour
     {
         if (other.isTrigger) return;
 
-        var target = other.GetComponentInParent<DamageableEntity>();
+        var target = other.GetComponentInParent<Health>();
 
         if (target != null)
         {

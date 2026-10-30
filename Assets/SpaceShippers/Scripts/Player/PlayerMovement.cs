@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Color _dashColor = Color.cyan;
     [SerializeField] private Color _dashFailColor = Color.red;
 
-    public bool IsDashing = false; 
+    public bool IsDashing { get; private set; }
 
     // defaults
     private Color _defaultColor;
