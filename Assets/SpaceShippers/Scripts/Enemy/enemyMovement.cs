@@ -60,4 +60,5 @@ public class EnemyMovement : MonoBehaviour
             rb.linearVelocity = distance > stopDistance ? direction * moveSpeed : Vector3.zero;
         }
     }
+    
 }
