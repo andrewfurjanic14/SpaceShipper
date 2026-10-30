@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 6517596139798294599}
   - component: {fileID: 8650674960135295364}
   - component: {fileID: 4733912732935376053}
+  - component: {fileID: 4158184078213045240}
   m_Layer: 6
   m_Name: MA_Prefab
   m_TagString: Terrestrial
@@ -222,3 +223,17 @@ MonoBehaviour:
     m_Bits: 10240
   MassConst: 1986000
   TimeBetweenUpdates: 1
+--- !u!114 &4158184078213045240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3858081049838771276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c7b041808b4f92a5aaf41be3e488aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.PCG.PlanetRotation
+  rotationSpeed: -1
+  rotationAxis: {x: 0, y: 1, z: 0}

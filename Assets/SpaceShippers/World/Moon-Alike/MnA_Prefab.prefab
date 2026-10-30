@@ -20,7 +20,7 @@ GameObject:
   m_TagString: Terrestrial
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &2486064481735334200
 Transform:
@@ -172,12 +172,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be6025a0673245ee898c5f7e1cff2b65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.PCG.Orbit
-  moveSpeed: 2
-  turnSpeed: 5
-  stopDistance: 3
-  maxAccel: 5
-  altitude: 500
+  moveSpeed: 25
+  altitude: 3000
   orbitAxis: {x: 0, y: 1, z: 0}
   orbitalMask:
     serializedVersion: 2
     m_Bits: 64
+  turnSpeed: 5
+  tidallyLocked: 1
+  customMoonSpin: 0
+  moonSpinAxis: {x: 0, y: 1, z: 0}
+  moonSpinSpeed: 60
+  CurrentlyOrbiting: {fileID: 0}
