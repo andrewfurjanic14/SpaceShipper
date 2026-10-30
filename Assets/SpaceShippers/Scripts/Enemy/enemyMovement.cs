@@ -11,9 +11,6 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float stopDistance = 3f;
     [SerializeField] private float maxAccel = 5f; // Used for smooth speed lerping
 
-    [Header("Orbit Settings")] [SerializeField]
-    private float orbitSpeed = 2f;
-
     [SerializeField] private float altitude = 5f;
     [SerializeField] private Vector3 orbitAxis = Vector3.up;
     [SerializeField] private LayerMask orbitalMask;
