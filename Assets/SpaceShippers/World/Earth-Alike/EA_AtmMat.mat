@@ -51,10 +51,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AtmosphereThickness: 0.1
+    - _AtmosphereThickness: 3
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors:
-    - _AtmosphereColor: {r: 0.3443396, g: 0.75148773, b: 1, a: 1}
+    - _AtmosphereColor: {r: 0, g: 0.22325166, b: 0.3584906, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
