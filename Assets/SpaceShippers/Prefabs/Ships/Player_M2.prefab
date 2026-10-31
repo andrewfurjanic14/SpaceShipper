@@ -292,6 +292,8 @@ GameObject:
   - component: {fileID: 8164592707860938483}
   - component: {fileID: 7251592136955902663}
   - component: {fileID: 4694808467386490268}
+  - component: {fileID: 627747913392097594}
+  - component: {fileID: 38032881420237332}
   m_Layer: 7
   m_Name: Player_M2
   m_TagString: Player
@@ -380,6 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _shooter: {fileID: 8164592707860938483}
+  _miner: {fileID: 627747913392097594}
   _dashMeter: {fileID: 0}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
@@ -405,7 +408,6 @@ MonoBehaviour:
   _maxDashEnergy: 100
   _dashColor: {r: 0, g: 1, b: 1, a: 1}
   _dashFailColor: {r: 1, g: 0, b: 0, a: 1}
-  IsDashing: 0
 --- !u!114 &8164592707860938483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,16 +438,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 0
-  health: 100
-  teamID: 0
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.1
+  _maxHealth: 100
+  _current: 0
 --- !u!114 &4694808467386490268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,3 +455,32 @@ MonoBehaviour:
   _lineMaterial: {fileID: 2100000, guid: d4b59c4273a424cf2bf81e5ce3ee213e, type: 2}
   _length: 100
   _width: 0.1
+--- !u!114 &627747913392097594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf55b73f2346e458994c7bac3f1a584f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Miner
+  _range: 3
+  _damage: 10
+  _interval: 0.2
+  _muzzle: {fileID: 6235656291481504494}
+  _trajectoryPreview: {fileID: 4694808467386490268}
+--- !u!114 &38032881420237332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25f5585c0766e405eb1729e8b5149b21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Inventory
