@@ -1,17 +1,16 @@
 using UnityEngine;
-[RequireComponent(typeof(Shooter))]
 public class TrajectoryPreview : MonoBehaviour
 {
     [SerializeField] private Material _lineMaterial;
     [SerializeField] private float _length = 100f;
     [SerializeField] private float _width = 0.03f;
 
-    private Shooter _shooter;
+    private IAimSource _aimSource;
     private LineRenderer[] _lines;
 
     void Awake()
     {
-        _shooter = GetComponent<Shooter>();
+        _aimSource = GetComponent<IAimSource>();
         CreateLines();
         enabled = false;
     }
@@ -21,14 +20,14 @@ public class TrajectoryPreview : MonoBehaviour
 
     public void Update()
     {
-        Transform ship = _shooter.Ship;
-        Transform[] muzzles = _shooter.Muzzles;
+        Transform ship = _aimSource.Ship;
+        Transform[] muzzles = _aimSource.Muzzles;
 
         for (int i = 0; i < _lines.Length; i++)
         {
             if (muzzles[i] == null || _lines[i] == null) continue;
 
-            Quaternion rotation = _shooter.GetAimRotation(muzzles[i]);
+            Quaternion rotation = _aimSource.GetAimRotation(muzzles[i]);
             Vector3 start = ship.InverseTransformPoint(muzzles[i].position);
             Vector3 dir = ship.InverseTransformDirection(rotation * Vector3.forward);
 
@@ -39,7 +38,7 @@ public class TrajectoryPreview : MonoBehaviour
 
     private void CreateLines()
     {
-        Transform[] muzzles = _shooter.Muzzles;
+        Transform[] muzzles = _aimSource.Muzzles;
         _lines = new LineRenderer[muzzles.Length];
 
         for (int i = 0; i < muzzles.Length; i++)
@@ -47,7 +46,7 @@ public class TrajectoryPreview : MonoBehaviour
             if (muzzles[i] == null) continue;
 
             var lineObject = new GameObject($"Trajectory Preview {i + 1}");
-            lineObject.transform.SetParent(_shooter.Ship, false);
+            lineObject.transform.SetParent(_aimSource.Ship, false);
 
             var line = lineObject.AddComponent<LineRenderer>();
             line.useWorldSpace = false;

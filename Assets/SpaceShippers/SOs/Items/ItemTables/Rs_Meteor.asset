@@ -12,4 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a90418a2e5ef463cad84d2d83c37209, type: 3}
   m_Name: Rs_Meteor
   m_EditorClassIdentifier: Assembly-CSharp::ItemTable
-  _entries: []
+  _entries:
+  - Item: {fileID: 11400000, guid: c17677a67338b4106940b549756e2ef5, type: 2}
+    Weight: 1
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
+    Weight: 2
+    Amount: 5
+  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
+    Weight: 1
+    Amount: 6

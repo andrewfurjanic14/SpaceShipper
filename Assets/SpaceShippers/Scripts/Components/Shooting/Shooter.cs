@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Shooter : MonoBehaviour
+public class Shooter : MonoBehaviour, IAimSource
 {
     [SerializeField] private Weapon _weapon;
     [SerializeField] private TrajectoryPreview _trajectoryPreview;
@@ -18,16 +18,16 @@ public class Shooter : MonoBehaviour
 
     private void Awake()
     {
-        _projectileLayer = GetProjectileLayer();
-
         if (_trajectoryPreview == null)
             _trajectoryPreview = GetComponentInChildren<TrajectoryPreview>();
 
         if (_ship == null)
-        _ship = transform.parent != null ? transform.parent : transform;
+            _ship = transform.parent != null ? transform.parent : transform;
 
         if (_muzzles == null || _muzzles.Length == 0)
             _muzzles = new[] { transform };
+
+        _projectileLayer = GetProjectileLayer();
     }
 
     private void OnDisable() => StopFiring();
@@ -71,7 +71,7 @@ public class Shooter : MonoBehaviour
     #region Helpers
     private int GetProjectileLayer()
     {
-        bool isPlayer = gameObject.layer == LayerMask.NameToLayer("Player");
+        bool isPlayer = _ship.gameObject.layer == LayerMask.NameToLayer("Player");
         string layerName = isPlayer ? "PlayerProjectile" : "EnemyProjectile";
         
         int layer = LayerMask.NameToLayer(layerName);

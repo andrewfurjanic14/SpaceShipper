@@ -6,11 +6,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    // components
+    // Components
     private Rigidbody _rb;
     [SerializeField] private Renderer _shipRenderer;
 
-    // settings
+    // Settings
     [SerializeField] private float 
         _moveSpeed, _turnSpeed, _linearDampening, _dashForce, _brakeForce,
         _dashCost, _dashRechargeRate, _dashDuration, _maxDashEnergy;
@@ -18,28 +18,30 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Color _dashColor = Color.cyan;
     [SerializeField] private Color _dashFailColor = Color.red;
 
-    public bool IsDashing { get; private set; }
-
-    // defaults
+    // Defaults
     private Color _defaultColor;
 
-    // status
+    // Status
     private float _dashEnergy;
     public float DashPercent => _dashEnergy / _maxDashEnergy;
+    public bool IsDashing { get; private set; }
+
+    // Events
+    public event Action DashStateChanged;
 
 
     public void Awake()
     {
-        // get components
+        // Get components
         _rb = GetComponent<Rigidbody>();
 
-        // set physics rules
+        // Set physics rules
         _rb.linearDamping = _linearDampening;
 
-        // set defaults
+        // Set defaults
         _defaultColor = _shipRenderer.material.color;
 
-        // set status
+        // Set status
         _dashEnergy = _maxDashEnergy;
     }
 
@@ -66,17 +68,17 @@ public class PlayerMovement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext ctx)
     {
-        if (_dashEnergy >= _dashCost)
-        {
-            _rb.AddForce(transform.forward * _dashForce, ForceMode.Impulse);
-            _shipRenderer.material.color = _dashColor;
-            _dashEnergy -= _dashCost;
-            IsDashing = true;
-        }
-        else
+        if (_dashEnergy < _dashCost)
         {
             _shipRenderer.material.color = _dashFailColor;
+            return;
         }
+
+        _rb.AddForce(transform.forward * _dashForce, ForceMode.Impulse);
+        _shipRenderer.material.color = _dashColor;
+        _dashEnergy -= _dashCost;
+        IsDashing = true;
+        DashStateChanged?.Invoke();
 
         Invoke(nameof(EndDash), _dashDuration);
     }
@@ -85,6 +87,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _shipRenderer.material.color = _defaultColor;
         IsDashing = false;
+        DashStateChanged?.Invoke();
     }
     
     public void Brake()

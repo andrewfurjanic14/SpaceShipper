@@ -2,27 +2,41 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class Miner : MonoBehaviour
+public class Miner : MonoBehaviour, IAimSource
 {
+    // Components
+    [SerializeField] private TrajectoryPreview _trajectoryPreview;
+    [SerializeField] private Transform _ship;
+    [SerializeField] private Transform _muzzle;
+    private Inventory _inventory;
+    private Transform[] _muzzles;
+
+    // Settings
     [SerializeField] private float _range = 3f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private float _interval = 0.2f;
     [SerializeField] private LayerMask _mask = ~0;
 
-    [SerializeField] private Transform _muzzle;
-    [SerializeField] private TrajectoryPreview _trajectoryPreview;
-
-    private Inventory _inventory;
+    // Status
     private bool _isMining;
     private float _nextTick;
 
+    // Accessors
+    public Transform Ship => _ship;
+    public Transform[] Muzzles => _muzzles;
+    public Quaternion GetAimRotation(Transform muzzle) => muzzle.rotation;
 
-    void Awake()
+
+    private void Awake()
     {
-        _inventory = GetComponent<Inventory>();
+        _inventory = GetComponentInParent<Inventory>();
 
-        if (_muzzle == null)
+        if (_ship == null)
+            _ship = transform.parent != null ? transform.parent : transform;
+
+        if (_muzzle == null) 
             _muzzle = transform;
+        _muzzles = new[] { _muzzle };
 
         if (_trajectoryPreview == null)
             _trajectoryPreview = GetComponent<TrajectoryPreview>();
@@ -60,7 +74,7 @@ public class Miner : MonoBehaviour
             _trajectoryPreview.enabled = false;
     }
 
-    public void Mine()
+    private void Mine()
     {
         if (Physics.Raycast(_muzzle.position, _muzzle.forward, out RaycastHit hit,
                             _range, _mask, QueryTriggerInteraction.Ignore))
