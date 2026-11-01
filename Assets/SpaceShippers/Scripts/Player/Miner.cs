@@ -4,24 +4,27 @@ using UnityEngine.Rendering;
 
 public class Miner : MonoBehaviour, IAimSource
 {
-    // Components
-    [SerializeField] private TrajectoryPreview _trajectoryPreview;
+    [Header("Transforms")]
     [SerializeField] private Transform _ship;
     [SerializeField] private Transform _muzzle;
-    private Inventory _inventory;
     private Transform[] _muzzles;
+    private Inventory _inventory;
 
-    // Settings
+    [Header("Optional: Trajectory Visualization")]
+    [SerializeField] private TrajectoryPreview _trajectoryPreview;
+    [SerializeField] private TrajectoryStyle _trajectoryStyle;
+
+    [Header("Miner")]
     [SerializeField] private float _range = 3f;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private float _interval = 0.2f;
     [SerializeField] private LayerMask _mask = ~0;
 
-    // Status
+    // Runtime
     private bool _isMining;
     private float _nextTick;
 
-    // Accessors
+    // IAimSource Accessors
     public Transform Ship => _ship;
     public Transform[] Muzzles => _muzzles;
     public Quaternion GetAimRotation(Transform muzzle) => muzzle.rotation;
@@ -40,6 +43,12 @@ public class Miner : MonoBehaviour, IAimSource
 
         if (_trajectoryPreview == null)
             _trajectoryPreview = GetComponent<TrajectoryPreview>();
+        
+        if (_trajectoryPreview != null)
+        {
+            _trajectoryStyle.Length = _range; 
+            _trajectoryPreview.Register(this, _trajectoryStyle);
+        }
     } 
 
     private void Update()
@@ -49,29 +58,19 @@ public class Miner : MonoBehaviour, IAimSource
         _nextTick = Time.time + _interval;
         Mine();
     }
-    private void OnEnable()
-    {
-        ResourceNode.Harvested += OnHarvested;
-    }
-
-    private void OnDisable()
-    {
-        ResourceNode.Harvested -= OnHarvested;
-        StopMining();
-    }
 
     public void StartMining()
     {
         _isMining = true;
         if (_trajectoryPreview != null)
-            _trajectoryPreview.enabled = true;
+            _trajectoryPreview.SetVisible(this, true);
     }
 
     public void StopMining()
     {
         _isMining = false;
         if (_trajectoryPreview != null)
-            _trajectoryPreview.enabled = false;
+            _trajectoryPreview.SetVisible(this, false);
     }
 
     private void Mine()
@@ -80,13 +79,8 @@ public class Miner : MonoBehaviour, IAimSource
                             _range, _mask, QueryTriggerInteraction.Ignore))
         {
             var node = hit.collider.GetComponentInParent<ResourceNode>();
-            if (node == null) return;
-            node.GetComponent<Health>().TakeDamage(_damage);
+            if (node != null)
+                node.YieldHarvest(_damage, _inventory);
         }
-    }
-
-    private void OnHarvested(Item item, int amount)
-    {
-        _inventory.Add(item, amount);
     }
 }

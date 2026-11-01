@@ -1,69 +1,101 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 public class TrajectoryPreview : MonoBehaviour
 {
-    [SerializeField] private Material _lineMaterial;
-    [SerializeField] private float _length = 100f;
-    [SerializeField] private float _width = 0.03f;
-
-    private IAimSource _aimSource;
-    private LineRenderer[] _lines;
-
-    void Awake()
+    // Channels allow multiple IAimSource scripts to register with unique lines
+    private class Channel
     {
-        _aimSource = GetComponent<IAimSource>();
-        CreateLines();
-        enabled = false;
+        public IAimSource Source;
+        public LineRenderer[] Lines;
+        public float LineLength;
+        public bool Visible;
     }
+    private readonly Dictionary<IAimSource, Channel> _channels = new();
+    private int _visibleCount; // Allows update can skip when nothing visible
 
-    private void OnEnable() => SetLinesEnabled(true);
-    private void OnDisable() => SetLinesEnabled(false);
-
-    public void Update()
+    public void Register(IAimSource source, TrajectoryStyle style)
     {
-        Transform ship = _aimSource.Ship;
-        Transform[] muzzles = _aimSource.Muzzles;
+        if (source == null || style == null) return;
 
-        for (int i = 0; i < _lines.Length; i++)
+        Transform[] muzzles = source.Muzzles;
+        var channel = new Channel
         {
-            if (muzzles[i] == null || _lines[i] == null) continue;
+            Source = source,
+            Lines = new LineRenderer[muzzles.Length],
+            LineLength = style.Length,
+        };
 
-            Quaternion rotation = _aimSource.GetAimRotation(muzzles[i]);
-            Vector3 start = ship.InverseTransformPoint(muzzles[i].position);
-            Vector3 dir = ship.InverseTransformDirection(rotation * Vector3.forward);
-
-            _lines[i].SetPosition(0, start);
-            _lines[i].SetPosition(1, start + dir * _length);
-        }
-    }
-
-    private void CreateLines()
-    {
-        Transform[] muzzles = _aimSource.Muzzles;
-        _lines = new LineRenderer[muzzles.Length];
-
+        // Fill the channel's Lines[] using style specifications
         for (int i = 0; i < muzzles.Length; i++)
         {
             if (muzzles[i] == null) continue;
 
             var lineObject = new GameObject($"Trajectory Preview {i + 1}");
-            lineObject.transform.SetParent(_aimSource.Ship, false);
+            lineObject.transform.SetParent(source.Ship, false);
 
             var line = lineObject.AddComponent<LineRenderer>();
             line.useWorldSpace = false;
             line.positionCount = 2;
-            line.startWidth = line.endWidth = _width;
-            line.sharedMaterial = _lineMaterial;
+            line.startWidth = line.endWidth = style.Width;
+            line.sharedMaterial = style.Material;
             line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             line.receiveShadows = false;
             line.enabled = false;
-            _lines[i] = line;
+            channel.Lines[i] = line;
         }
+
+        _channels[source] = channel;
     }
 
-    private void SetLinesEnabled(bool value)
+    public void Unregister(IAimSource source)
     {
-        if (_lines == null) return;
-        foreach (var line in _lines)
-            if (line != null) line.enabled = value;
+        if (source == null || !_channels.TryGetValue(source, out var channel)) return;
+
+        if (channel.Visible) 
+            _visibleCount--;
+
+        foreach (var line in channel.Lines)
+            if (line != null) Destroy(line.gameObject);
+
+        _channels.Remove(source);
+    }
+
+    public void SetVisible(IAimSource source, bool visible)
+    {
+        if (source == null || !_channels.TryGetValue(source, out var channel)) return;
+        if (channel.Visible == visible) return;
+
+        channel.Visible = visible;
+        _visibleCount += visible ? 1 : -1;
+
+        foreach (var line in channel.Lines)
+            if (line != null) line.enabled = visible;
+    }
+
+    public void Update()
+    {
+        if (_visibleCount == 0) return;
+
+        foreach (var channel in _channels.Values)
+        {
+            if (!channel.Visible) continue;
+
+            Transform ship = channel.Source.Ship;
+            Transform[] muzzles = channel.Source.Muzzles;
+            LineRenderer[] lines = channel.Lines;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (muzzles[i] == null || lines[i] == null) continue;
+
+                Quaternion rotation = channel.Source.GetAimRotation(muzzles[i]);
+                Vector3 start = ship.InverseTransformPoint(muzzles[i].position);
+                Vector3 dir = ship.InverseTransformDirection(rotation * Vector3.forward);
+
+                lines[i].SetPosition(0, start);                            // Start
+                lines[i].SetPosition(1, start + dir * channel.LineLength); // End
+            }
+        }
     }
 }

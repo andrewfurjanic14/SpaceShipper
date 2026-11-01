@@ -8,8 +8,8 @@ public class PlayerController : MonoBehaviour
 {
     #region Scripts
     private PlayerMovement _playerMovement;
-    [SerializeField] private Shooter _shooter;
-    [SerializeField] private Miner _miner;
+    private Shooter _shooter;
+    private Miner _miner;
     #endregion
 
     #region UI
@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool CanUseTools => !_playerMovement.IsDashing;
     #endregion
 
-    #region Status
+    #region Runtime Status
     private bool _isForwardThrusting;
     private bool _isReverseThrusting;
     private bool _isBraking;
@@ -39,13 +39,10 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _inputSystem = new PlayerInputActions();
-        
-        _playerMovement = GetComponent<PlayerMovement>();
 
-        if (_shooter == null)
-            _shooter = GetComponentInChildren<Shooter>();
-        if (_miner == null)
-            _miner = GetComponentInChildren<Miner>();
+        _playerMovement = GetComponent<PlayerMovement>();
+        _shooter = GetComponent<Shooter>();
+        _miner = GetComponent<Miner>();
     }
 
     private void OnEnable()
@@ -98,7 +95,7 @@ public class PlayerController : MonoBehaviour
         // Stop all running actions
         _isShooting = _isMining = false;
         _isForwardThrusting = _isReverseThrusting = _isBraking = false;
-        SwitchTool(Tool.None);
+        ActivateTool(Tool.None);
     }
 
     void Update()
@@ -126,6 +123,8 @@ public class PlayerController : MonoBehaviour
             _playerMovement.ReverseThrust();
         }
     }
+
+    #region Event Handlers
     private void OnThrust(InputAction.CallbackContext ctx)
     {
         _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
@@ -142,7 +141,9 @@ public class PlayerController : MonoBehaviour
         _isMining = ctx.ReadValueAsButton();
         RefreshActiveTool();
     } 
+    #endregion
 
+    #region Tool Helpers
     /// <summary>
     /// Considers input bools to refresh <see cref="_activeTool"/> 
     /// </summary>
@@ -150,7 +151,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!CanUseTools)
         {
-            SwitchTool(Tool.None);
+            ActivateTool(Tool.None);
             return;
         }
 
@@ -160,17 +161,17 @@ public class PlayerController : MonoBehaviour
         if (activeStillHeld) return;
 
         if (_isShooting)
-            SwitchTool(Tool.Shooter);
+            ActivateTool(Tool.Shooter);
         else if (_isMining)
-            SwitchTool(Tool.Miner);
+            ActivateTool(Tool.Miner);
         else
-            SwitchTool(Tool.None);
+            ActivateTool(Tool.None);
     }
 
     /// <summary>
     /// Handles the switch of <see cref="_activeTool"/> : stops old tool, starts new tool
     /// </summary>
-    private void SwitchTool(Tool next)
+    private void ActivateTool(Tool next)
     {
         if (next == _activeTool) return;
 
@@ -188,4 +189,5 @@ public class PlayerController : MonoBehaviour
         if (_activeTool == Tool.Miner)
              _miner.StartMining();
     }
+    #endregion
 }

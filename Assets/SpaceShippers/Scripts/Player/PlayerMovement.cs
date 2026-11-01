@@ -6,22 +6,31 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
-    // Components
-    private Rigidbody _rb;
+    [Header("Ship")]
     [SerializeField] private Renderer _shipRenderer;
+    private Rigidbody _rb;
 
-    // Settings
-    [SerializeField] private float 
-        _moveSpeed, _turnSpeed, _linearDampening, _dashForce, _brakeForce,
-        _dashCost, _dashRechargeRate, _dashDuration, _maxDashEnergy;
-    
+    [Header("Steering & Movement Forces")]
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _steerSpeed;
+    [SerializeField] private float _brakeForce;
+    [SerializeField] private float _linearDampening;
+
+    [Header("Dash")]
+    [SerializeField] private float _dashForce;
+    [SerializeField] private float _dashCost;
+    [SerializeField] private float _dashDuration;
+    [SerializeField] private float _dashRechargeRate;
+    [SerializeField] private float _maxDashEnergy;
+
+    [Space]
     [SerializeField] private Color _dashColor = Color.cyan;
     [SerializeField] private Color _dashFailColor = Color.red;
 
     // Defaults
     private Color _defaultColor;
 
-    // Status
+    // Runtime Status
     private float _dashEnergy;
     public float DashPercent => _dashEnergy / _maxDashEnergy;
     public bool IsDashing { get; private set; }
@@ -53,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Steer(Vector2 input)
     {
-        transform.Rotate(new Vector3(-input.y, input.x, 0) * _turnSpeed);
+        transform.Rotate(new Vector3(-input.y, input.x, 0) * _steerSpeed);
     }
 
     public void ForwardThrust()
