@@ -77,9 +77,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void Dash(InputAction.CallbackContext ctx)
     {
+        if (IsDashing) return;
         if (_dashEnergy < _dashCost)
         {
             _shipRenderer.material.color = _dashFailColor;
+            Invoke(nameof(SetDefaultColor), 0.1f);
             return;
         }
 
@@ -94,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void EndDash()
     {
-        _shipRenderer.material.color = _defaultColor;
+        SetDefaultColor();
         IsDashing = false;
         DashStateChanged?.Invoke();
     }
@@ -102,5 +104,10 @@ public class PlayerMovement : MonoBehaviour
     public void Brake()
     {
         _rb.AddForce(-_rb.linearVelocity * _brakeForce, ForceMode.Force);
+    }
+
+    private void SetDefaultColor()
+    {
+        _shipRenderer.material.color = _defaultColor;
     }
 }

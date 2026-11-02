@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[RequireComponent(typeof(Inventory))]
 public class Miner : MonoBehaviour, IAimSource
 {
     [Header("Transforms")]
@@ -32,7 +33,7 @@ public class Miner : MonoBehaviour, IAimSource
 
     private void Awake()
     {
-        _inventory = GetComponentInParent<Inventory>();
+        _inventory = GetComponent<Inventory>();
 
         if (_ship == null)
             _ship = transform.parent != null ? transform.parent : transform;

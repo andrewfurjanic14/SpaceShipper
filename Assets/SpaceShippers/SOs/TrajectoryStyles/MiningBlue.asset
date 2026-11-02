@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ac3d98e4644145daaf8517c68cb8c06, type: 3}
   m_Name: MiningBlue
   m_EditorClassIdentifier: Assembly-CSharp::TrajectoryStyle
-  Material: {fileID: 0}
-  Length: 100
+  Material: {fileID: 2100000, guid: d4b59c4273a424cf2bf81e5ce3ee213e, type: 2}
+  Length: 50
   Width: 0.1

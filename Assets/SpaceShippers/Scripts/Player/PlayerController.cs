@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 using System.Collections;
 
 [RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(Miner))]
+
 public class PlayerController : MonoBehaviour
 {
     #region Scripts
@@ -13,6 +16,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region UI
+    [SerializeField] private Canvas _inventoryCanvas;
     [SerializeField] private Slider _dashMeter;
     #endregion
 
@@ -48,14 +52,16 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         var p = _inputSystem.Player;
-        p.Dash.performed += _playerMovement.Dash;
 
+        // Shoot
         p.Shoot.started += OnShoot;
         p.Shoot.canceled += OnShoot;
 
+        // Mine
         p.Mine.started  += OnMine;
         p.Mine.canceled  += OnMine;
 
+        // Movement
         p.ForwardThrust.started += OnThrust;
         p.ForwardThrust.canceled += OnThrust;
 
@@ -65,6 +71,15 @@ public class PlayerController : MonoBehaviour
         p.Brake.started += OnThrust;
         p.Brake.canceled += OnThrust;
 
+        p.Dash.performed += _playerMovement.Dash;
+
+        // UI
+        if (_inventoryCanvas != null && 
+            _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
+        {
+            p.ToggleUI.performed += inventoryUI.OnTogglePressed;
+        }
+
         p.Enable();
 
         // Dash restricts usage of tools for its duration
@@ -73,14 +88,16 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         var p = _inputSystem.Player;
-        p.Dash.performed -= _playerMovement.Dash;
 
+        // Shoot
         p.Shoot.started -= OnShoot;
         p.Shoot.canceled -= OnShoot;
 
+        // Mine
         p.Mine.started -= OnMine;
         p.Mine.canceled -= OnMine;
 
+        // Movement
         p.ForwardThrust.started -= OnThrust;
         p.ForwardThrust.canceled -= OnThrust;
 
@@ -89,6 +106,15 @@ public class PlayerController : MonoBehaviour
 
         p.Brake.started -= OnThrust;
         p.Brake.canceled -= OnThrust;
+
+        p.Dash.performed -= _playerMovement.Dash;
+
+        // UI
+        if (_inventoryCanvas != null && 
+            _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
+        {
+            p.ToggleUI.performed += inventoryUI.OnTogglePressed;
+        }
 
         p.Disable();
 
