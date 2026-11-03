@@ -4,44 +4,57 @@ using UnityEngine;
 public class ProceduralSphere : MonoBehaviour
 {
     [Header("Physics Settings")]
-    public LayerMask Layers; // Added LayerMask for SphereCollider
+    public LayerMask Layers; 
     
     [Header("Sphere Settings")]
     public float radius = 1.0f;
     
-    [Range(4, 64)]
+    [Range(4, 512)]
     public int longitudeSegments = 24; 
     
-    [Range(4, 64)]
+    [Range(4, 512)]
     public int latitudeSegments = 16;  
 
     [Header("Material Settings")]
     public Texture2D sphereTexture;
     public Material sphereMaterial;
 
-    private MeshFilter meshFilter;
-    private MeshRenderer meshRenderer;
-    private SphereCollider sphereCollider; // Changed from MeshCollider
+    protected MeshFilter meshFilter;
+    protected MeshRenderer meshRenderer;
+    protected SphereCollider sphereCollider; 
     private Mesh mesh;
 
-    void Awake()
+    // --- Made virtual so subclasses can handle placement initialization ---
+    protected virtual void Reset()
+    {
+        SetupMaterial();
+        GenerateSphereMesh();
+        Debug.Log("Procedural Sphere generated automatically on placement.");
+    }
+
+    protected virtual void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
-        
-        // 1. Grab the required SphereCollider component
         sphereCollider = GetComponent<SphereCollider>();
 
-        // 2. Fix the pink material issue
         SetupMaterial();
 
-        // 3. Generate geometry and apply physics
-        GenerateSphereMesh();
+        if (meshFilter.sharedMesh == null)
+        {
+            GenerateSphereMesh();
+        }
     }
 
-    void OnValidate()
+    protected virtual void OnValidate()
     {
-        if (Application.isPlaying && mesh != null)
+        if (meshFilter == null) meshFilter = GetComponent<MeshFilter>();
+        
+        if (!Application.isPlaying)
+        {
+            GenerateSphereMesh();
+        }
+        else if (mesh != null)
         {
             GenerateSphereMesh();
         }
@@ -49,35 +62,47 @@ public class ProceduralSphere : MonoBehaviour
 
     private void SetupMaterial()
     {
+        if (meshRenderer == null) meshRenderer = GetComponent<MeshRenderer>();
+
+        // If an asset file is already assigned, stick with it!
         if (sphereMaterial != null)
         {
-            meshRenderer.material = sphereMaterial;
+            meshRenderer.sharedMaterial = sphereMaterial;
             return;
         }
 
-        string shaderName = "Standard"; 
-        if (UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline != null)
+        // Live preview safety check: prevents planets from sharing properties in the scene layout
+        if (!Application.isPlaying && meshRenderer.sharedMaterial != null && meshRenderer.sharedMaterial.name.Contains("(Clone)"))
         {
-            shaderName = "Universal Render Pipeline/Lit"; 
+            return; 
         }
 
+        string shaderName = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline != null 
+            ? "Universal Render Pipeline/Lit" 
+            : "Standard";
+
         Shader defaultShader = Shader.Find(shaderName);
-        
         if (defaultShader != null)
         {
-            sphereMaterial = new Material(defaultShader);
-            if (sphereTexture != null)
-            {
-                sphereMaterial.mainTexture = sphereTexture;
-            }
-            meshRenderer.material = sphereMaterial;
+            // Instantiates an temporary isolated variant for this specific planet instance to tweak color sliders
+            Material instanceMat = new Material(defaultShader);
+            instanceMat.name = gameObject.name + "_PreviewMaterial (Clone)";
+        
+            meshRenderer.sharedMaterial = instanceMat;
         }
     }
 
-    public void GenerateSphereMesh()
+
+    // --- Made Virtual: Subclasses can extend the calculation or assignment pipeline ---
+    public virtual Mesh GenerateSphereMesh()
     {
+        meshFilter = GetComponent<MeshFilter>();
+        sphereCollider = GetComponent<SphereCollider>();
+
         mesh = new Mesh();
         mesh.name = "ProceduralSphere";
+        
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         int vertexCount = (longitudeSegments + 1) * (latitudeSegments + 1);
         Vector3[] vertices = new Vector3[vertexCount];
@@ -100,9 +125,11 @@ public class ProceduralSphere : MonoBehaviour
                 Vector3 normal = new Vector3(cosLon * sinLat, cosLat, sinLon * sinLat);
                 
                 normals[index] = normal;
-                vertices[index] = normal * radius; 
-                uvs[index] = new Vector2((float)lon / longitudeSegments, (float)lat / latitudeSegments);
                 
+                // --- HOOK FOR SUBCLASSES: Calculates position using a dedicated virtual function ---
+                vertices[index] = CalculateVertexPosition(normal); 
+                
+                uvs[index] = new Vector2((float)lon / longitudeSegments, (float)lat / latitudeSegments);
                 index++;
             }
         }
@@ -121,33 +148,47 @@ public class ProceduralSphere : MonoBehaviour
                 var bottomCurrent = current + (longitudeSegments + 1);
                 var bottomNext = bottomCurrent + 1;
 
-                // --- FIXED: Swapped the winding order to face outward ---
-                // First Triangle
                 triangles[triIndex++] = current;
-                triangles[triIndex++] = next;          // Swapped with bottomCurrent
-                triangles[triIndex++] = bottomCurrent;  // Swapped with next
+                triangles[triIndex++] = next;          
+                triangles[triIndex++] = bottomCurrent;  
 
-                // Second Triangle
                 triangles[triIndex++] = next;
-                triangles[triIndex++] = bottomNext;     // Swapped with bottomCurrent
-                triangles[triIndex++] = bottomCurrent;  // Swapped with bottomNext
+                triangles[triIndex++] = bottomNext;     
+                triangles[triIndex++] = bottomCurrent;  
             }
         }
-
 
         mesh.vertices = vertices;
         mesh.normals = normals;
         mesh.uv = uvs;
         mesh.triangles = triangles;
 
-        meshFilter.mesh = mesh;
+        // Recalculate physical characteristics because noise deforms raw normals
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        mesh.RecalculateTangents();
 
-        // 4. Update the standard Sphere Collider to match the mesh radius
+        meshFilter.sharedMesh = mesh; 
+
+        UpdateCollider();
+
+        return mesh;
+    }
+
+    // --- Virtual Helper: Ensures sub-classes can modify collider shapes to fit peaks/valleys ---
+    protected virtual void UpdateCollider()
+    {
         if (sphereCollider != null)
         {
-            sphereCollider.center = Vector3.zero; // Keeps it perfectly centered
-            sphereCollider.radius = radius;       // Automatically scales with your mesh variable
+            sphereCollider.center = Vector3.zero; 
+            sphereCollider.radius = radius;       
             sphereCollider.includeLayers = Layers;
         }
+    }
+
+    // --- Virtual Helper: Dictates position math based on the base normal orientation ---
+    protected virtual Vector3 CalculateVertexPosition(Vector3 normal)
+    {
+        return normal * radius;
     }
 }
