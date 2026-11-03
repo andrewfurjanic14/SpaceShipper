@@ -4,13 +4,12 @@ using UnityEngine.InputSystem;
 public class Shooter : MonoBehaviour, IAimSource
 {
     [SerializeField] private Weapon _weapon;
+    [SerializeField] private float _spreadDegrees = 0f;
 
     [Header("Ship Configs")]
     [SerializeField] private Transform[] _muzzles; 
     [SerializeField] private Transform _ship;
     [SerializeField] private bool _useShipForward = true;
-    // Each bullet can be off by up to this many degrees in any direction
-    [SerializeField] private float _spreadDegrees = 10f;
 
     [Header("Optional: Trajectory Visualization")]
     [SerializeField] private TrajectoryPreview _trajectoryPreview;
@@ -76,7 +75,7 @@ public class Shooter : MonoBehaviour, IAimSource
     //random tilt for one bullet: a random point in a circle, used as yaw (x) and pitch (y)
     private Quaternion GetAimOffset()
     {
-        Vector2 r = Random.insideUnitCircle * _spreadDegrees;
+        Vector2 r = Random.insideUnitCircle * (_spreadDegrees + _weapon.SpreadDegrees);
         return Quaternion.Euler(r.y, r.x, 0f);
     }
 
