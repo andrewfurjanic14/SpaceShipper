@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyMovement : MonoBehaviour
@@ -153,6 +155,18 @@ public class EnemyMovement : MonoBehaviour
         }
 
         // 5. Smoothly Lerp up to the target movement speed
+        Vector3 targetVelocity = transform.forward * moveSpeed;
+        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
+    }
+    
+    public void Chase(float deltaTime)
+    {
+        if (!target) return;
+
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
+
         Vector3 targetVelocity = transform.forward * moveSpeed;
         rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
     }
