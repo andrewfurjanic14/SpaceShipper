@@ -48,7 +48,7 @@ public class EnemyMovement : MonoBehaviour
     public void FindNearestOrbitableObject()
     {
         var results = new Collider[100];
-        var size = Physics.OverlapSphereNonAlloc(rb.position, 1000f, results, orbitalMask);
+        var size = Physics.OverlapSphereNonAlloc(rb.position, 100000f, results, orbitalMask);
         if (size == 0) return;
 
         GameObject nearest = null;
@@ -118,6 +118,11 @@ public class EnemyMovement : MonoBehaviour
         }
         else
         {
+            if (!CurrentlyOrbiting)
+            {
+                FindNearestOrbitableObject();
+                if (!CurrentlyOrbiting) return;
+            }
             // 3. True Perpendicular Orbital Mechanics
             Vector3 planetCenter = CurrentlyOrbiting.transform.position;
             Vector3 radialVector = transform.position - planetCenter;

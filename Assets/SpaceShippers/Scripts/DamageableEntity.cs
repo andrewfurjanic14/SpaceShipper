@@ -54,7 +54,7 @@ public class DamageableEntity : MonoBehaviour
             var gravField = planet.GetComponent<GravField>();
             if (gravField != null)
             {
-                gravField.RemoveObjectFromGravField(rb);
+                gravField._removalBuffer.Add(rb);
             }
         }
 

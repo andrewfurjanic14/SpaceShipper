@@ -305,6 +305,7 @@ MonoBehaviour:
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
+  _spreadDegrees: 10
 --- !u!114 &365155974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -322,7 +323,7 @@ MonoBehaviour:
   turnSpeed: 180
   stopDistance: 3
   maxAccel: 5
-  altitude: 340
+  altitude: 5
   orbitAxis: {x: 0, y: 1, z: 0}
   orbitalMask:
     serializedVersion: 2
@@ -366,16 +367,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 1
-  health: 100
-  teamID: 1
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.25
+  _maxHealth: 100
+  _current: 0
 --- !u!65 &365155977
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -838,6 +831,7 @@ MonoBehaviour:
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
+  _spreadDegrees: 10
 --- !u!114 &635200152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -855,7 +849,7 @@ MonoBehaviour:
   turnSpeed: 180
   stopDistance: 3
   maxAccel: 5
-  altitude: 360
+  altitude: 5
   orbitAxis: {x: 0, y: 1, z: 0}
   orbitalMask:
     serializedVersion: 2
@@ -899,16 +893,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 1
-  health: 100
-  teamID: 1
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.25
+  _maxHealth: 100
+  _current: 0
 --- !u!65 &635200155
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1253,16 +1239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 0
-  health: 300
-  teamID: 0
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.1
+  _maxHealth: 100
+  _current: 0
 --- !u!136 &934871397
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1642,16 +1620,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  controlType: 1
-  health: 100
-  teamID: 1
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  impactDamageMultiplier: 0.25
+  _maxHealth: 100
+  _current: 0
 --- !u!65 &1735836814
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1764,7 +1734,7 @@ MonoBehaviour:
   turnSpeed: 180
   stopDistance: 3
   maxAccel: 5
-  altitude: 350
+  altitude: 5
   orbitAxis: {x: 0, y: 1, z: 0}
   orbitalMask:
     serializedVersion: 2
@@ -1828,6 +1798,7 @@ MonoBehaviour:
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
+  _spreadDegrees: 10
 --- !u!114 &1735836822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1910,15 +1881,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6412370966126315572, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6412370966126315572, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6412370966126315572, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6606451695553433917, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: m_AnchorMax.x
