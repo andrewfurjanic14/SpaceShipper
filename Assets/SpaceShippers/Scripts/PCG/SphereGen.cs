@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(SphereCollider))]
-public class ProceduralSphere : MonoBehaviour
+public class SphereGen : MonoBehaviour
 {
     [Header("Physics Settings")]
     public LayerMask Layers; // Added LayerMask for SphereCollider
