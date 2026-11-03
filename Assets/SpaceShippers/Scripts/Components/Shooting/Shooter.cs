@@ -8,12 +8,16 @@ public class Shooter : MonoBehaviour
     [SerializeField] private Transform[] _muzzles;
     [SerializeField] private Transform _ship;
     [SerializeField] private bool _useShipForward = true;
+    // Each bullet can be off by up to this many degrees in any direction
+    [SerializeField] private float _spreadDegrees = 10f;
 
     private int _projectileLayer;
     private float _nextFireTime;
     private bool _isFiring;
 
     public Transform Ship => _ship;
+    private Collider[] _ownColliders;
+
     public Transform[] Muzzles => _muzzles;
 
     private void Awake()
@@ -25,6 +29,8 @@ public class Shooter : MonoBehaviour
 
         if (_ship == null)
         _ship = transform.parent != null ? transform.parent : transform;
+
+        _ownColliders = _ship.GetComponentsInChildren<Collider>(); 
 
         if (_muzzles == null || _muzzles.Length == 0)
             _muzzles = new[] { transform };
@@ -51,6 +57,13 @@ public class Shooter : MonoBehaviour
             _trajectoryPreview.enabled = false;
     }
 
+    //random tilt for one bullet: a random point in a circle, used as yaw (x) and pitch (y)
+    private Quaternion GetAimOffset()
+    {
+        Vector2 r = Random.insideUnitCircle * _spreadDegrees;
+        return Quaternion.Euler(r.y, r.x, 0f);
+    }
+
     private void TryFire()
     {
         if (_weapon == null || _weapon.ProjectilePrefab == null) return;
@@ -62,9 +75,17 @@ public class Shooter : MonoBehaviour
         {
             if (muzzle == null) continue;
 
-            Quaternion rotation = GetAimRotation(muzzle);
+            Quaternion rotation = GetAimRotation(muzzle) * GetAimOffset();
+
             Projectile p = Instantiate(_weapon.ProjectilePrefab, muzzle.position, rotation);
             p.Initialize(_projectileLayer, _weapon);
+
+            // So that the player or enemy cant get hit by their own bullet
+            var bulletCol = p.GetComponent<Collider>();
+            foreach (var c in _ownColliders)
+            {
+                Physics.IgnoreCollision(bulletCol, c);
+            }
         }
     }
 
