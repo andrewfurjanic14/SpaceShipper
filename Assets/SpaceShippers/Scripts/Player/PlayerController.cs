@@ -1,76 +1,140 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 [RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(Miner))]
+
 public class PlayerController : MonoBehaviour
 {
     #region Scripts
     private PlayerMovement _playerMovement;
-    [SerializeField] private Shooter _shooter;
+    private Shooter _shooter;
+    private Miner _miner;
     #endregion
 
     #region UI
+    [SerializeField] private Canvas _inventoryCanvas;
     [SerializeField] private Slider _dashMeter;
-    #endregion
-
-    #region States
-    private bool _isForwardThrusting;
-    private bool _isReverseThrusting;
-    private bool _isBraking;
-    private bool _isShooting;
     #endregion
 
     #region Input Handling
     private PlayerInputActions _inputSystem;
-    private Vector2 _movementInput;
+    private Vector2 _SteerInput;
     #endregion
+
+    #region Tools
+    private enum Tool { None, Shooter, Miner }
+    private Tool _activeTool = Tool.None;
+    private bool CanUseTools => !_playerMovement.IsDashing;
+    #endregion
+
+    #region Runtime Status
+    private bool _isForwardThrusting;
+    private bool _isReverseThrusting;
+    private bool _isBraking;
+    private bool _isShooting;
+    private bool _isMining;
+    #endregion
+
 
     private void Awake()
     {
         _inputSystem = new PlayerInputActions();
 
         _playerMovement = GetComponent<PlayerMovement>();
-
-        if (_shooter == null)
-            _shooter = GetComponent<Shooter>();
+        _shooter = GetComponent<Shooter>();
+        _miner = GetComponent<Miner>();
     }
 
     private void OnEnable()
     {
-        _inputSystem.Player.Dash.performed += _playerMovement.Dash;
-        _inputSystem.Player.Shoot.started  += OnShootStarted;
-        _inputSystem.Player.Shoot.canceled += OnShootCanceled;
-        _inputSystem.Player.Enable();
+        var p = _inputSystem.Player;
+
+        // Shoot
+        p.Shoot.started += OnShoot;
+        p.Shoot.canceled += OnShoot;
+
+        // Mine
+        p.Mine.started  += OnMine;
+        p.Mine.canceled  += OnMine;
+
+        // Movement
+        p.ForwardThrust.started += OnThrust;
+        p.ForwardThrust.canceled += OnThrust;
+
+        p.ReverseThrust.started += OnThrust;
+        p.ReverseThrust.canceled += OnThrust;
+
+        p.Brake.started += OnThrust;
+        p.Brake.canceled += OnThrust;
+
+        p.Dash.performed += _playerMovement.Dash;
+
+        // UI
+        if (_inventoryCanvas != null && 
+            _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
+        {
+            p.ToggleUI.performed += inventoryUI.OnTogglePressed;
+        }
+
+        p.Enable();
+
+        // Dash restricts usage of tools for its duration
+        _playerMovement.DashStateChanged += RefreshActiveTool;
     }
     private void OnDisable()
     {
-        _inputSystem.Player.Dash.performed -= _playerMovement.Dash;
-        _inputSystem.Player.Shoot.started  -= OnShootStarted;
-        _inputSystem.Player.Shoot.canceled -= OnShootCanceled;
-        _inputSystem.Player.Disable();
+        var p = _inputSystem.Player;
 
-        if (_shooter != null)
-            _shooter.StopFiring();
+        // Shoot
+        p.Shoot.started -= OnShoot;
+        p.Shoot.canceled -= OnShoot;
+
+        // Mine
+        p.Mine.started -= OnMine;
+        p.Mine.canceled -= OnMine;
+
+        // Movement
+        p.ForwardThrust.started -= OnThrust;
+        p.ForwardThrust.canceled -= OnThrust;
+
+        p.ReverseThrust.started -= OnThrust;
+        p.ReverseThrust.canceled -= OnThrust;
+
+        p.Brake.started -= OnThrust;
+        p.Brake.canceled -= OnThrust;
+
+        p.Dash.performed -= _playerMovement.Dash;
+
+        // UI
+        if (_inventoryCanvas != null && 
+            _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
+        {
+            p.ToggleUI.performed += inventoryUI.OnTogglePressed;
+        }
+
+        p.Disable();
+
+        // Stop all running actions
+        _isShooting = _isMining = false;
+        _isForwardThrusting = _isReverseThrusting = _isBraking = false;
+        ActivateTool(Tool.None);
     }
 
     void Update()
     {
-        // read inputs
-        _movementInput = _inputSystem.Player.Steer.ReadValue<Vector2>();
-        _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
-        _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
-        _isBraking = _inputSystem.Player.Brake.IsPressed();
-        _isShooting = _inputSystem.Player.Shoot.IsPressed(); // hold to fire
+        _SteerInput = _inputSystem.Player.Steer.ReadValue<Vector2>();
 
-        // update UI
         _dashMeter.value = _playerMovement.DashPercent;
     }
 
     private void FixedUpdate()
     {
         // movement
-        _playerMovement.Steer(_movementInput);
+        _playerMovement.Steer(_SteerInput);
 
         if (_isBraking)
         {
@@ -85,6 +149,71 @@ public class PlayerController : MonoBehaviour
             _playerMovement.ReverseThrust();
         }
     }
-    private void OnShootStarted(InputAction.CallbackContext ctx) => _shooter.StartFiring();
-    private void OnShootCanceled(InputAction.CallbackContext ctx) => _shooter.StopFiring();
+
+    #region Event Handlers
+    private void OnThrust(InputAction.CallbackContext ctx)
+    {
+        _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
+        _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
+        _isBraking = _inputSystem.Player.Brake.IsPressed();  
+    }
+    private void OnShoot(InputAction.CallbackContext ctx)
+    {
+        _isShooting = ctx.ReadValueAsButton();
+        RefreshActiveTool();
+    } 
+    private void OnMine(InputAction.CallbackContext ctx)
+    {
+        _isMining = ctx.ReadValueAsButton();
+        RefreshActiveTool();
+    } 
+    #endregion
+
+    #region Tool Helpers
+    /// <summary>
+    /// Considers input bools to refresh <see cref="_activeTool"/> 
+    /// </summary>
+    private void RefreshActiveTool()
+    {
+        if (!CanUseTools)
+        {
+            ActivateTool(Tool.None);
+            return;
+        }
+
+        bool activeStillHeld = _activeTool == Tool.Shooter ? _isShooting
+                             : _activeTool == Tool.Miner   ? _isMining
+                             : false;
+        if (activeStillHeld) return;
+
+        if (_isShooting)
+            ActivateTool(Tool.Shooter);
+        else if (_isMining)
+            ActivateTool(Tool.Miner);
+        else
+            ActivateTool(Tool.None);
+    }
+
+    /// <summary>
+    /// Handles the switch of <see cref="_activeTool"/> : stops old tool, starts new tool
+    /// </summary>
+    private void ActivateTool(Tool next)
+    {
+        if (next == _activeTool) return;
+
+        // exit
+        if (_activeTool == Tool.Shooter)
+            _shooter.StopFiring();
+        if (_activeTool == Tool.Miner)
+             _miner.StopMining();
+
+        _activeTool = next;
+
+        // enter
+        if (_activeTool == Tool.Shooter)
+            _shooter.StartFiring();
+        if (_activeTool == Tool.Miner)
+             _miner.StartMining();
+    }
+    #endregion
 }

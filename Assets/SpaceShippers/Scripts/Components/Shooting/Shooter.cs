@@ -1,60 +1,76 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Shooter : MonoBehaviour
+public class Shooter : MonoBehaviour, IAimSource
 {
     [SerializeField] private Weapon _weapon;
-    [SerializeField] private TrajectoryPreview _trajectoryPreview;
-    [SerializeField] private Transform[] _muzzles;
+
+    [Header("Ship Configs")]
+    [SerializeField] private Transform[] _muzzles; 
     [SerializeField] private Transform _ship;
     [SerializeField] private bool _useShipForward = true;
     // Each bullet can be off by up to this many degrees in any direction
     [SerializeField] private float _spreadDegrees = 10f;
 
+    [Header("Optional: Trajectory Visualization")]
+    [SerializeField] private TrajectoryPreview _trajectoryPreview;
+    [SerializeField] private TrajectoryStyle _trajectoryStyle;
+
+    // Runtime
     private int _projectileLayer;
     private float _nextFireTime;
     private bool _isFiring;
 
+    // IAimSource Accessors
     public Transform Ship => _ship;
     private Collider[] _ownColliders;
 
     public Transform[] Muzzles => _muzzles;
+    public Quaternion GetAimRotation(Transform muzzle) => 
+        _useShipForward ? _ship.rotation : muzzle.rotation;
 
     private void Awake()
     {
-        _projectileLayer = GetProjectileLayer();
-
-        if (_trajectoryPreview == null)
-            _trajectoryPreview = GetComponentInChildren<TrajectoryPreview>();
-
         if (_ship == null)
-        _ship = transform.parent != null ? transform.parent : transform;
+            _ship = transform.parent != null ? transform.parent : transform;
 
         _ownColliders = _ship.GetComponentsInChildren<Collider>(); 
 
         if (_muzzles == null || _muzzles.Length == 0)
             _muzzles = new[] { transform };
+        
+        if (_trajectoryPreview == null)
+            _trajectoryPreview = GetComponent<TrajectoryPreview>();
+
+        if (_trajectoryPreview != null)
+            _trajectoryPreview.Register(this, _trajectoryStyle);
+
+        _projectileLayer = GetProjectileLayer();
     }
 
-    private void OnDisable() => StopFiring();
-
-    private void Update()
+    private void OnDestroy()
     {
-        if (_isFiring) TryFire();
+        if (_trajectoryPreview != null)
+            _trajectoryPreview.Unregister(this);
     }
 
     public void StartFiring()
     {
         _isFiring = true;
         if (_trajectoryPreview != null)
-            _trajectoryPreview.enabled = true;
+            _trajectoryPreview.SetVisible(this, true);
     }
 
     public void StopFiring()
     {
         _isFiring = false;
         if (_trajectoryPreview != null)
-            _trajectoryPreview.enabled = false;
+            _trajectoryPreview.SetVisible(this, false);
+    }
+
+    private void Update()
+    {
+        if (_isFiring) TryFire();
     }
 
     //random tilt for one bullet: a random point in a circle, used as yaw (x) and pitch (y)
@@ -89,10 +105,9 @@ public class Shooter : MonoBehaviour
         }
     }
 
-    #region Helpers
     private int GetProjectileLayer()
     {
-        bool isPlayer = gameObject.layer == LayerMask.NameToLayer("Player");
+        bool isPlayer = _ship.gameObject.layer == LayerMask.NameToLayer("Player");
         string layerName = isPlayer ? "PlayerProjectile" : "EnemyProjectile";
         
         int layer = LayerMask.NameToLayer(layerName);
@@ -101,10 +116,4 @@ public class Shooter : MonoBehaviour
 
         return layer;
     }
-
-    public Quaternion GetAimRotation(Transform muzzle)
-    {
-        return _useShipForward ? _ship.rotation : muzzle.rotation;
-    }
-    #endregion
 }
