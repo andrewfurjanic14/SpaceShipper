@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4969933876540889542}
   - component: {fileID: 6897855040778612795}
   - component: {fileID: 8881427715987600820}
-  - component: {fileID: 4135579388216971747}
   m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
@@ -91,23 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &4135579388216971747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1811670248537264850}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _weapon: {fileID: 0}
-  _trajectoryPreview: {fileID: 0}
-  _muzzles: []
-  _ship: {fileID: 0}
-  _useShipForward: 1
 --- !u!1 &3495821648627910872
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,7 +99,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6235656291481504494}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,11 +271,11 @@ GameObject:
   - component: {fileID: 866869789265684293}
   - component: {fileID: 7164922875491153863}
   - component: {fileID: 7306505762539681633}
-  - component: {fileID: 8164592707860938483}
   - component: {fileID: 7251592136955902663}
-  - component: {fileID: 4694808467386490268}
-  - component: {fileID: 627747913392097594}
   - component: {fileID: 38032881420237332}
+  - component: {fileID: 2018331997198432620}
+  - component: {fileID: 2483319319252019005}
+  - component: {fileID: 8617996456563379163}
   m_Layer: 7
   m_Name: Player_M2
   m_TagString: Player
@@ -335,7 +317,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -366,8 +348,8 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
+  m_Height: 2
+  m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7164922875491153863
 MonoBehaviour:
@@ -381,8 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72220aa9e3f434a7fa97aa5a0869a429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _shooter: {fileID: 8164592707860938483}
-  _miner: {fileID: 627747913392097594}
+  _inventoryCanvas: {fileID: 0}
   _dashMeter: {fileID: 0}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
@@ -398,34 +379,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MovementScript
   _shipRenderer: {fileID: 8881427715987600820}
   _moveSpeed: 8
-  _turnSpeed: 2
+  _steerSpeed: 2
+  _brakeForce: 2
   _linearDampening: 1
   _dashForce: 20
-  _brakeForce: 2
   _dashCost: 20
-  _dashRechargeRate: 5
   _dashDuration: 0.4
+  _dashRechargeRate: 5
   _maxDashEnergy: 100
   _dashColor: {r: 0, g: 1, b: 1, a: 1}
   _dashFailColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!114 &8164592707860938483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7314602444589515209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Weapon
-  _weapon: {fileID: 11400000, guid: 7c645e13dd3c0462b9c5bc23481b273f, type: 2}
-  _trajectoryPreview: {fileID: 4694808467386490268}
-  _muzzles:
-  - {fileID: 6235656291481504494}
-  _ship: {fileID: 7352037256802799010}
-  _useShipForward: 1
 --- !u!114 &7251592136955902663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,38 +403,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
   _maxHealth: 100
   _current: 0
---- !u!114 &4694808467386490268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7314602444589515209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b42a440e7c2794c3197a45dac4b9052c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TrajectoryPreview
-  _lineMaterial: {fileID: 2100000, guid: d4b59c4273a424cf2bf81e5ce3ee213e, type: 2}
-  _length: 100
-  _width: 0.1
---- !u!114 &627747913392097594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7314602444589515209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf55b73f2346e458994c7bac3f1a584f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Miner
-  _range: 3
-  _damage: 10
-  _interval: 0.2
-  _muzzle: {fileID: 6235656291481504494}
-  _trajectoryPreview: {fileID: 4694808467386490268}
 --- !u!114 &38032881420237332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -484,3 +415,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25f5585c0766e405eb1729e8b5149b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
+--- !u!114 &2018331997198432620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63354adc4edc4994eb35d5bf19063a62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Weapon
+  _weapon: {fileID: 11400000, guid: 7c645e13dd3c0462b9c5bc23481b273f, type: 2}
+  _muzzles:
+  - {fileID: 6235656291481504494}
+  _ship: {fileID: 7352037256802799010}
+  _useShipForward: 1
+  _trajectoryPreview: {fileID: 8617996456563379163}
+  _trajectoryStyle: {fileID: 11400000, guid: e4e00c41e9879407388b2e774581cc04, type: 2}
+--- !u!114 &2483319319252019005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf55b73f2346e458994c7bac3f1a584f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Miner
+  _ship: {fileID: 7352037256802799010}
+  _muzzle: {fileID: 6235656291481504494}
+  _trajectoryPreview: {fileID: 8617996456563379163}
+  _trajectoryStyle: {fileID: 11400000, guid: bd6eba9253bb041af9a79722d037b730, type: 2}
+  _range: 50
+  _damage: 10
+  _interval: 0.5
+  _mask:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &8617996456563379163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b42a440e7c2794c3197a45dac4b9052c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrajectoryPreview

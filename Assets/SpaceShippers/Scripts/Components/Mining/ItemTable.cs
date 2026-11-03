@@ -11,9 +11,6 @@ public class ItemTable : ScriptableObject
         public int Amount;
     }
 
-    [System.Serializable]
-    public struct IntRange { public int Min; public int Max; }
-
     [SerializeField] private Entry[] _entries;
     public bool TryRoll(out Item item, out int amount)
     {
