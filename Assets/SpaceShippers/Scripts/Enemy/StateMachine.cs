@@ -17,12 +17,12 @@ namespace SpaceShippers.Scripts.Enemy
         
         private EnemyMovement controller = null;
         private EnemyState currentState = EnemyState.Idle;
-        private DamageableEntity health = null; 
+        private Health health = null; 
         
         private void Awake()
         {
             controller = GetComponent<EnemyMovement>();
-            health = GetComponent<DamageableEntity>();
+            health = GetComponent<Health>();
         }
 
         private void Start()
