@@ -217,12 +217,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e958588ddcb1a439ad50f04ad61dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GravField
-  detectionRadius: 5000
-  targetLayer:
+  _radius: 5
+  _targetLayer:
     serializedVersion: 2
-    m_Bits: 10240
-  MassConst: 1986000
-  TimeBetweenUpdates: 1
+    m_Bits: 4096
+  _gravityStrength: 39860
+  _scanInterval: 1
+  _removalBuffer: []
 --- !u!114 &4158184078213045240
 MonoBehaviour:
   m_ObjectHideFlags: 0

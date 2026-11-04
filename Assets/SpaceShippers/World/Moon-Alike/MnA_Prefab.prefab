@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 4733912732935376053}
   - component: {fileID: -7522133018673146104}
   - component: {fileID: -4470659313785737372}
+  - component: {fileID: 4008976201919760275}
+  - component: {fileID: 1312295194486247921}
   m_Layer: 6
   m_Name: MnA_Prefab
   m_TagString: Terrestrial
@@ -127,12 +129,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e958588ddcb1a439ad50f04ad61dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GravField
-  detectionRadius: 1000
-  targetLayer:
+  _radius: 5
+  _targetLayer:
     serializedVersion: 2
-    m_Bits: 10240
-  MassConst: 986000
-  TimeBetweenUpdates: 1
+    m_Bits: 4096
+  _gravityStrength: 39860
+  _scanInterval: 1
+  _removalBuffer: []
 --- !u!54 &-7522133018673146104
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -184,3 +187,30 @@ MonoBehaviour:
   moonSpinAxis: {x: 0, y: 1, z: 0}
   moonSpinSpeed: 60
   CurrentlyOrbiting: {fileID: 0}
+--- !u!114 &4008976201919760275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3858081049838771276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  _maxHealth: 5000
+  _current: 0
+--- !u!114 &1312295194486247921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3858081049838771276}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58b52f930dd4f4b49b05169e6aaf21d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
+  _itemTable: {fileID: 11400000, guid: d448120ec29974a9fad97b68ac8efe70, type: 2}

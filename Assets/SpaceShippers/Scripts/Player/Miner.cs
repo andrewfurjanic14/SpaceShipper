@@ -22,7 +22,7 @@ public class Miner : MonoBehaviour, IAimSource
     [SerializeField] private LayerMask _mask = ~0;
 
     // Runtime
-    private bool _isMining;
+    public bool _isMining { get; private set; }
     private float _nextTick;
 
     // IAimSource Accessors

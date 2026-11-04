@@ -44,7 +44,8 @@ namespace SpaceShippers.Scripts.PCG
 
         private void Start()
         {
-            FindNearestOrbitableObject();
+            if (!CurrentlyOrbiting) FindNearestOrbitableObject();
+            else InitOrbit();
             InitializeAngle();
         }
 
@@ -124,6 +125,28 @@ namespace SpaceShippers.Scripts.PCG
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime));
         }
 
+        private void InitOrbit()
+        {
+            if (CurrentlyOrbiting)
+            {
+                var sph = CurrentlyOrbiting.GetComponent<ProceduralSphere>();
+                if (sph)
+                {
+                    planetRadius = sph.radius;
+                }
+                else
+                {
+                    if (Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, 
+                            out RaycastHit hit, 1000f))
+                    {
+                        planetRadius = (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance;
+                    }
+                }
+                
+                targetDistance = planetRadius + altitude;
+            }
+        }
+
         public void FindNearestOrbitableObject()
         {
             var results = new Collider[100];
@@ -147,24 +170,7 @@ namespace SpaceShippers.Scripts.PCG
 
             CurrentlyOrbiting = nearest;
 
-            if (CurrentlyOrbiting)
-            {
-                var sph = CurrentlyOrbiting.GetComponent<ProceduralSphere>();
-                if (sph)
-                {
-                    planetRadius = sph.radius;
-                }
-                else
-                {
-                    if (Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, 
-                        out RaycastHit hit, 1000f))
-                    {
-                        planetRadius = (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance;
-                    }
-                }
-                
-                targetDistance = planetRadius + altitude;
-            }
+            InitOrbit(); 
         }
 
         private void InitializeAngle()
