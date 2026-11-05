@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a90418a2e5ef463cad84d2d83c37209, type: 3}
+  m_Name: Rs_ShipLvl1
+  m_EditorClassIdentifier: Assembly-CSharp::ItemTable
+  _entries:
+  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
+    Weight: 5
+    Amount: 5
+  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
+    Weight: 5
+    Amount: 10

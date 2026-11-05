@@ -19,13 +19,21 @@ public class EnemyShooting : MonoBehaviour
     private void Update()
     {
         Transform target = movement.Target;
-        if (_shooter == null || target == null || !target.gameObject.activeInHierarchy)
-            return;
+        bool shouldFire = false;
 
-        Vector3 toTarget = target.position - transform.position;
+        if (target != null && target.gameObject.activeInHierarchy)
+        {
+            Vector3 toTarget = target.position - transform.position;
+            shouldFire = toTarget.magnitude <= fireRange && Vector3.Angle(transform.forward, toTarget) <= aimTolerance;
+        }
 
-        // fire when close enough and roughly facing the player
-        if (toTarget.magnitude > fireRange) return;
-        if (Vector3.Angle(transform.forward, toTarget) > aimTolerance) return;
+        if (shouldFire)
+        {
+            _shooter.StartFiring();
+        }
+        else
+        {
+            _shooter.StopFiring();
+        }
     }
 }

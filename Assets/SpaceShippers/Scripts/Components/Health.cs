@@ -7,6 +7,7 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float _maxHealth = 100f;
     [SerializeField] private float _current;
+    [SerializeField] private ItemTable _debrisTable;
 
     public event Action<float, float> Changed; // current, max
     public event Action Died;
@@ -41,5 +42,17 @@ public class Health : MonoBehaviour
             Died.Invoke();
         else 
             Destroy(gameObject); // nobody handled it, so default to removal
+    }
+    
+    public void MakeDebris()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Debris");
+        if (_debrisTable)
+        {
+            var r = gameObject.AddComponent<ResourceNode>();
+            r._itemTable = _debrisTable;
+            IsDead = false; 
+            _current = _maxHealth;
+        }
     }
 }

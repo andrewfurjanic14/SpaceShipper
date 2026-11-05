@@ -12,7 +12,7 @@ public class GravField : MonoBehaviour
 
     private Collider[] _collidersInRange = new Collider[50]; // Detection
     private HashSet<Rigidbody> _affectedBodies = new ();     // Storage
-    private List<Rigidbody> _removalBuffer = new ();         // Removal
+    public List<Rigidbody> _removalBuffer = new ();         // Removal
 
     private float _nextScan;
 
@@ -36,7 +36,7 @@ public class GravField : MonoBehaviour
         foreach (var rb in _affectedBodies)
         {
             // Skip and buffer for removal: objects that were destroyed or exited field
-            if (rb == null || (rb.position - transform.position).sqrMagnitude > _radius * _radius)
+            if (!rb || (rb.position - transform.position).sqrMagnitude > _radius * _radius)
             {
                 _removalBuffer.Add(rb);
                 continue;
@@ -69,11 +69,7 @@ public class GravField : MonoBehaviour
         {
             // identify new rb
             Rigidbody rb = _collidersInRange[i].GetComponent<Rigidbody>();
-            if (rb == null) continue;
-
-            // filter out: non-grav objects
-            Gravity grav = rb.GetComponent<Gravity>();
-            if (grav == null || !grav.IsAffected) continue;
+            if (!rb) continue;
 
             _affectedBodies.Add(rb); // HashSet avoids adding duplicates
         }
