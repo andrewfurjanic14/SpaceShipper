@@ -80,7 +80,7 @@ public class Miner : MonoBehaviour, IAimSource
                             _range, _mask, QueryTriggerInteraction.Ignore))
         {
             var node = hit.collider.GetComponentInParent<ResourceNode>();
-            if (node != null)
+            if (node)
                 node.YieldHarvest(_damage, _inventory);
         }
     }

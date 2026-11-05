@@ -18,11 +18,13 @@ namespace SpaceShippers.Scripts.Enemy
         private EnemyMovement controller = null;
         private EnemyState currentState = EnemyState.Idle;
         private Health health = null; 
+        private bool isDebris = false;
         
         private void Awake()
         {
             controller = GetComponent<EnemyMovement>();
             health = GetComponent<Health>();
+            health.Died += KillMe;
         }
 
         private void Start()
@@ -36,6 +38,8 @@ namespace SpaceShippers.Scripts.Enemy
             {
                 return;
             }
+
+            if (isDebris) return; 
             
             var deltaTime = Time.deltaTime; 
             switch (currentState)
@@ -53,6 +57,17 @@ namespace SpaceShippers.Scripts.Enemy
                     //controller.Attack(deltaTime);
                     break;
             }
+        }
+        
+        private void KillMe()
+        {
+            if (health)
+            {
+                health.Died -= KillMe;
+            }
+
+            isDebris = true; 
+            health.MakeDebris();
         }
     }
 }

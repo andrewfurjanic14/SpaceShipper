@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Health))]
 public class ResourceNode : MonoBehaviour
 {
-    [SerializeField] private ItemTable _itemTable;
+    [SerializeField] public ItemTable _itemTable;
     private Health _health;
 
     private void Awake()

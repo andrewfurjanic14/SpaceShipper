@@ -233,6 +233,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4470659313785737372, guid: 3c248ba6db20d1f40a70e30b4fe984e8, type: 3}
+      propertyPath: mass
+      value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: -4470659313785737372, guid: 3c248ba6db20d1f40a70e30b4fe984e8, type: 3}
       propertyPath: CurrentlyOrbiting
       value: 
       objectReference: {fileID: 893541766}
@@ -470,10 +474,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weapon: {fileID: 0}
+  _spreadDegrees: 10
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
-  _spreadDegrees: 10
   _trajectoryPreview: {fileID: 0}
   _trajectoryStyle: {fileID: 0}
 --- !u!114 &365155974
@@ -1247,10 +1251,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weapon: {fileID: 0}
+  _spreadDegrees: 10
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
-  _spreadDegrees: 10
   _trajectoryPreview: {fileID: 0}
   _trajectoryStyle: {fileID: 0}
 --- !u!114 &635200152
@@ -2444,10 +2448,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weapon: {fileID: 0}
+  _spreadDegrees: 10
   _muzzles: []
   _ship: {fileID: 0}
   _useShipForward: 1
-  _spreadDegrees: 10
   _trajectoryPreview: {fileID: 0}
   _trajectoryStyle: {fileID: 0}
 --- !u!114 &1735836822

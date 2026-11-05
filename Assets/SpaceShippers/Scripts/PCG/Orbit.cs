@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace SpaceShippers.Scripts.PCG
 {
@@ -6,7 +7,6 @@ namespace SpaceShippers.Scripts.PCG
     {
         [Header("Orbital Mechanics")]
         [SerializeField] private float moveSpeed = 8f;
-        [SerializeField] private float altitude = 5f;
         [SerializeField] private Vector3 orbitAxis = Vector3.up;
         [SerializeField] private LayerMask orbitalMask;
 
@@ -26,31 +26,67 @@ namespace SpaceShippers.Scripts.PCG
         private uint refreshCount = 0;
 
         private float planetRadius = 5f;
-        [SerializeField] private GameObject CurrentlyOrbiting = null;
+        
+        [SerializeField]
+        private GameObject _currentlyOrbiting;
+
+        public GameObject CurrentlyOrbiting
+        {
+            get => _currentlyOrbiting;
+            set
+            {
+                _currentlyOrbiting = value; 
+                if (value)
+                {
+                    InitOrbit();
+                    InitializeAngle();
+                }
+            }
+        }
+
         private Rigidbody rb;
 
         private float currentAngle = 0f;
         private float targetDistance = 10f;
         private Quaternion targetRotation;
         private float moonSelfSpinAngle = 0f;
+        [SerializeField] private float mass = 1.0f; 
 
         private void Awake()
         {
-            rb = GetComponent<Rigidbody>();
-            if (!rb) rb = gameObject.AddComponent<Rigidbody>();
-            
-            rb.useGravity = false;
+            InitializeRigidbody();
+        }
+
+        private void InitializeRigidbody()
+        {
+            if (!rb)
+            {
+                rb = GetComponent<Rigidbody>();
+                if (!rb) rb = gameObject.AddComponent<Rigidbody>();
+                rb.useGravity = false;
+            }
+        }
+
+        private void OnValidate()
+        {
+            CurrentlyOrbiting = _currentlyOrbiting;
         }
 
         private void Start()
         {
+            InitializeRigidbody();
             if (!CurrentlyOrbiting) FindNearestOrbitableObject();
-            else InitOrbit();
-            InitializeAngle();
+            else 
+            {
+                InitOrbit();
+                InitializeAngle();
+            }
         }
 
         private void FixedUpdate()
         {
+            InitializeRigidbody();
+
             if (refreshCount == 0)
             {
                 refreshCount = refreshInterval;
@@ -58,7 +94,6 @@ namespace SpaceShippers.Scripts.PCG
                 {
                     FindNearestOrbitableObject();
                     if (!CurrentlyOrbiting) return;
-                    InitializeAngle();
                 }
             }
             else
@@ -69,10 +104,10 @@ namespace SpaceShippers.Scripts.PCG
             if (!CurrentlyOrbiting) return;
 
             // 1. Advance the orbit loop path angle
-            float angularVelocity = moveSpeed / targetDistance;
+            float angularVelocity = (targetDistance > 0.001f) ? (moveSpeed / targetDistance) : 0f;
             currentAngle += angularVelocity * Time.fixedDeltaTime;
 
-            // 2. Compute path position coordinates
+            // 2. Compute path position coordinates using a consistent orthonormal basis
             Vector3 planetCenter = CurrentlyOrbiting.transform.position;
             Vector3 normAxis = orbitAxis.normalized;
             
@@ -80,48 +115,47 @@ namespace SpaceShippers.Scripts.PCG
             if (planeRight.sqrMagnitude < 0.001f) planeRight = Vector3.Cross(normAxis, Vector3.forward);
             planeRight.Normalize();
             
-            Vector3 planeForward = Vector3.Cross(planeRight, normAxis).normalized;
+            // Fixed: Correct cross-product order matching SignedAngle's right-hand rule (Axis x Right)
+            Vector3 planeForward = Vector3.Cross(normAxis, planeRight).normalized;
 
             Vector3 orbitalOffset = (planeRight * Mathf.Cos(currentAngle) + planeForward * Mathf.Sin(currentAngle)) * targetDistance;
             Vector3 desiredPosition = planetCenter + orbitalOffset;
 
-            rb.MovePosition(desiredPosition);
-
-            // 3. Keep velocity vectors matched up
-            Vector3 tangentDirection = (-planeRight * Mathf.Sin(currentAngle) + planeForward * Mathf.Cos(currentAngle)).normalized;
-            rb.linearVelocity = tangentDirection * moveSpeed;
-
-            // 4. Calculate core directional face targets
-            Vector3 surfaceNormal = (desiredPosition - planetCenter).normalized;
-
-            if (tidallyLocked)
+            if (rb != null)
             {
-                // Force the forward face to look along the track, and up-axis to align with the planet core
-                targetRotation = Quaternion.LookRotation(tangentDirection, surfaceNormal);
-            }
-            else if (customMoonSpin)
-            {
-                // Advance custom spin angle
-                moonSelfSpinAngle += moonSpinSpeed * Time.fixedDeltaTime;
-                
-                // Keep the base tracking direction but multiply an added rotation offset over it
-                Quaternion baseTrackLook = Quaternion.LookRotation(tangentDirection, surfaceNormal);
-                Quaternion internalSpin = Quaternion.AngleAxis(moonSelfSpinAngle, moonSpinAxis.normalized);
-                
-                targetRotation = baseTrackLook * internalSpin;
-            }
-            else
-            {
-                // Simple standard look-forward flight
-                targetRotation = Quaternion.LookRotation(tangentDirection, Vector3.up);
+                rb.MovePosition(desiredPosition);
+
+                // 3. Keep velocity vectors matched up
+                Vector3 tangentDirection = (-planeRight * Mathf.Sin(currentAngle) + planeForward * Mathf.Cos(currentAngle)).normalized;
+                rb.linearVelocity = tangentDirection * moveSpeed;
+
+                // 4. Calculate core directional face targets
+                Vector3 surfaceNormal = (desiredPosition - planetCenter).normalized;
+
+                if (tidallyLocked)
+                {
+                    targetRotation = Quaternion.LookRotation(tangentDirection, surfaceNormal);
+                }
+                else if (customMoonSpin)
+                {
+                    moonSelfSpinAngle += moonSpinSpeed * Time.fixedDeltaTime;
+                    
+                    Quaternion baseTrackLook = Quaternion.LookRotation(tangentDirection, surfaceNormal);
+                    Quaternion internalSpin = Quaternion.AngleAxis(moonSelfSpinAngle, moonSpinAxis.normalized);
+                    
+                    targetRotation = baseTrackLook * internalSpin;
+                }
+                else
+                {
+                    targetRotation = Quaternion.LookRotation(tangentDirection, Vector3.up);
+                }
             }
         }
 
         private void Update()
         {
-            if (!CurrentlyOrbiting) return;
+            if (!CurrentlyOrbiting || rb == null) return;
 
-            // Apply smoothed look vectors
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime));
         }
 
@@ -129,6 +163,20 @@ namespace SpaceShippers.Scripts.PCG
         {
             if (CurrentlyOrbiting)
             {
+                InitializeRigidbody();
+
+                // Capture current distance seamlessly as our target orbit radius from the new parent
+                targetDistance = Vector3.Distance(transform.position, CurrentlyOrbiting.transform.position);
+
+                if (rb != null)
+                {
+                    float currentSpeed = rb.linearVelocity.magnitude;
+                    if (currentSpeed > 0.1f)
+                    {
+                        moveSpeed = Mathf.Lerp(moveSpeed, currentSpeed, 0.5f);
+                    }
+                }
+
                 var sph = CurrentlyOrbiting.GetComponent<ProceduralSphere>();
                 if (sph)
                 {
@@ -136,15 +184,31 @@ namespace SpaceShippers.Scripts.PCG
                 }
                 else
                 {
-                    if (Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, 
-                            out RaycastHit hit, 1000f))
+                    if (Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, out RaycastHit hit, 1000f))
                     {
-                        planetRadius = (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance;
+                        planetRadius = Mathf.Max(0.1f, (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance);
                     }
                 }
                 
-                targetDistance = planetRadius + altitude;
+                var health = CurrentlyOrbiting.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.Died += HandleTargetDeath;
+                }
             }
+        }
+
+        private void HandleTargetDeath()
+        {
+            if (CurrentlyOrbiting != null)
+            {
+                var health = CurrentlyOrbiting.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.Died -= HandleTargetDeath;
+                }
+            }
+            CurrentlyOrbiting = null;
         }
 
         public void FindNearestOrbitableObject()
@@ -159,7 +223,10 @@ namespace SpaceShippers.Scripts.PCG
             foreach (var c in results)
             {
                 if (!c) continue;
-                if (c.gameObject == gameObject) continue; // Skip self
+                if (c.gameObject == gameObject) continue; 
+                var orbitComponent = c.GetComponent<Orbit>();
+                if (orbitComponent && orbitComponent.mass <= 2f * mass) continue; 
+                
                 var distance = Vector3.Distance(transform.position, c.transform.position);
                 if (distance < minDistance)
                 {
@@ -169,8 +236,6 @@ namespace SpaceShippers.Scripts.PCG
             }
 
             CurrentlyOrbiting = nearest;
-
-            InitOrbit(); 
         }
 
         private void InitializeAngle()

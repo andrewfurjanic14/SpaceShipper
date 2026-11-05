@@ -69,11 +69,7 @@ public class GravField : MonoBehaviour
         {
             // identify new rb
             Rigidbody rb = _collidersInRange[i].GetComponent<Rigidbody>();
-            if (rb == null) continue;
-
-            // filter out: non-grav objects
-            Gravity grav = rb.GetComponent<Gravity>();
-            if (grav == null || !grav.IsAffected) continue;
+            if (!rb) continue;
 
             _affectedBodies.Add(rb); // HashSet avoids adding duplicates
         }

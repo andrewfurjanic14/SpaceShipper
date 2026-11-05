@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     #region Input Handling
     private PlayerInputActions _inputSystem;
     private Vector2 _movementInput;
+    private float _rollInput;
     #endregion
 
     private void Awake()
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (_inputSystem == null) return;
         _inputSystem.Player.Dash.performed += _playerMovement.Dash;
         _inputSystem.Player.Shoot.started  += OnShootStarted;
         _inputSystem.Player.Shoot.canceled += OnShootCanceled;
@@ -76,8 +78,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!_playerMovement) return;
         // read inputs
         _movementInput = _inputSystem.Player.Steer.ReadValue<Vector2>();
+        _rollInput = _inputSystem.Player.Roll.ReadValue<float>();
         _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
@@ -93,6 +97,7 @@ public class PlayerController : MonoBehaviour
     {
         // movement
         _playerMovement.Steer(_movementInput);
+        _playerMovement.Roll(_rollInput);
 
         if (_isBraking)
         {
