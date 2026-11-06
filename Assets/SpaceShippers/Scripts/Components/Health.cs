@@ -43,6 +43,12 @@ public class Health : MonoBehaviour
         else 
             Destroy(gameObject); // nobody handled it, so default to removal
     }
+
+    public void Revive(float HP)
+    {
+        IsDead = false;
+        _current = HP; 
+    }
     
     public void MakeDebris()
     {

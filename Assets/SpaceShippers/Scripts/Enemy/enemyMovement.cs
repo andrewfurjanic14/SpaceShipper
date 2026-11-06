@@ -176,4 +176,17 @@ public class EnemyMovement : MonoBehaviour
         rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
     }
     
+    public void MoveTowards(Vector3 targetPosition, float deltaTime)
+    {
+        Vector3 directionToTarget = (targetPosition - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
+
+        float distanceToTarget = Vector3.Distance(transform.position, targetPosition);
+        float speed = distanceToTarget > stopDistance ? moveSpeed : 0f;
+
+        Vector3 targetVelocity = transform.forward * speed;
+        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
+    }
+    
 }

@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class Shooter : MonoBehaviour, IAimSource
 {
-    [SerializeField] private Weapon _weapon;
+    [SerializeField] public Weapon _weapon;
     [SerializeField] private float _spreadDegrees = 0f;
 
     [Header("Ship Configs")]
@@ -45,21 +45,21 @@ public class Shooter : MonoBehaviour, IAimSource
 
     private void OnDestroy()
     {
-        if (_trajectoryPreview != null)
+        if (_trajectoryPreview)
             _trajectoryPreview.Unregister(this);
     }
 
     public void StartFiring()
     {
         _isFiring = true;
-        if (_trajectoryPreview != null)
+        if (_trajectoryPreview)
             _trajectoryPreview.SetVisible(this, true);
     }
 
     public void StopFiring()
     {
         _isFiring = false;
-        if (_trajectoryPreview != null)
+        if (_trajectoryPreview)
             _trajectoryPreview.SetVisible(this, false);
     }
 
@@ -75,16 +75,16 @@ public class Shooter : MonoBehaviour, IAimSource
         return Quaternion.Euler(r.y, r.x, 0f);
     }
 
-    private void TryFire()
+    public void TryFire()
     {
-        if (_weapon == null || _weapon.ProjectilePrefab == null) return;
+        if (!_weapon || !_weapon.ProjectilePrefab) return;
         if (Time.time < _nextFireTime) return;
             
         _nextFireTime = Time.time + 1f / _weapon.FireRate; 
 
         foreach (var muzzle in _muzzles)
         {
-            if (muzzle == null) continue;
+            if (!muzzle) continue;
 
             Quaternion rotation = GetAimRotation(muzzle) * GetAimOffset();
 

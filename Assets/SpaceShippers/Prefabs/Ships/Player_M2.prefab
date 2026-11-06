@@ -193,7 +193,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 0
 --- !u!224 &6412370966126315572
 RectTransform:
@@ -266,7 +266,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 0
 --- !u!224 &5308930044846536824
 RectTransform:
@@ -441,7 +441,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!224 &5464246935908714213
 RectTransform:
@@ -484,7 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -513,11 +513,11 @@ GameObject:
   - component: {fileID: 7941296990177868893}
   - component: {fileID: 6952126897217471445}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: GameplayCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!224 &3156318344456325130
 RectTransform:
@@ -575,10 +575,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -619,7 +619,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!224 &6606451695553433917
 RectTransform:
@@ -662,7 +662,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.022917405, g: 0.9716981, b: 0.736834, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -785,8 +785,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72220aa9e3f434a7fa97aa5a0869a429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _inventoryCanvas: {fileID: 0}
-  _dashMeter: {fileID: 5941518927826775158, guid: 304e006c3749244909a07adfa9f63f92, type: 3}
+  _shooter: {fileID: 0}
+  _miner: {fileID: 0}
+  _inventoryCanvas: {fileID: 7000470367705571860}
+  _dashMeter: {fileID: 2370109850178969531}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,10 +802,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementScript
   _shipRenderer: {fileID: 8881427715987600820}
-  _moveSpeed: 15
+  _maxMoveSpeed: 500
+  _acceleration: 1
   _steerSpeed: 2
   _brakeForce: 2
   _linearDampening: 1
+  _rollSpeed: 1
+  _rollDampening: 0
   _dashForce: 20
   _dashCost: 20
   _dashDuration: 0.4
@@ -825,6 +830,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
   _maxHealth: 100
   _current: 0
+  _debrisTable: {fileID: 0}
 --- !u!114 &38032881420237332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -850,11 +856,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weapon
   _weapon: {fileID: 11400000, guid: 7c645e13dd3c0462b9c5bc23481b273f, type: 2}
+  _spreadDegrees: 0
   _muzzles:
   - {fileID: 6235656291481504494}
   _ship: {fileID: 7352037256802799010}
   _useShipForward: 1
-  _spreadDegrees: 0
   _trajectoryPreview: {fileID: 8617996456563379163}
   _trajectoryStyle: {fileID: 11400000, guid: e4e00c41e9879407388b2e774581cc04, type: 2}
 --- !u!114 &2483319319252019005
@@ -873,7 +879,7 @@ MonoBehaviour:
   _muzzle: {fileID: 6235656291481504494}
   _trajectoryPreview: {fileID: 8617996456563379163}
   _trajectoryStyle: {fileID: 11400000, guid: bd6eba9253bb041af9a79722d037b730, type: 2}
-  _range: 50
+  _range: 250
   _damage: 10
   _interval: 0.5
   _mask:
@@ -1020,7 +1026,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!224 &3976021764486030677
 RectTransform:
@@ -1176,7 +1182,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!224 &1483731484741329920
 RectTransform:
@@ -1197,8 +1203,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -270, y: 150}
-  m_SizeDelta: {x: 160, y: 35}
+  m_AnchoredPosition: {x: -700, y: 350}
+  m_SizeDelta: {x: 400, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2370109850178969531
 MonoBehaviour:
@@ -1221,7 +1227,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0, g: 0.990566, b: 0.84761506, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}

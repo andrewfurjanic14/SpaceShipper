@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9041a085937b4b1186dc089d09ec973b, type: 3}
+  m_Name: Intercept & Destroy
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.Enemy.EnemyState
+  _transitionPackages:
+  - sense: {fileID: 11400000, guid: 00242340a6b429f419a9fee8cc09d03b, type: 2}
+    nextState: {fileID: 11400000, guid: 5e23aae8a9769b749ae02135553e34a7, type: 2}
+  - sense: {fileID: 11400000, guid: b60d4f69188618c488d9af8eec69a78d, type: 2}
+    nextState: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
+  currentTrackSense: {fileID: 11400000, guid: 5a70da634396daf499f96036b348cf81, type: 2}
+  isDefaultState: 0
+  aggressionLevel: 0.8
+  stateWeapon: {fileID: 11400000, guid: 423030d2e89895148a8aebf6a8de3246, type: 2}
+  allowMovement: 1
+  stateChangeChance: 0.01
+  _comments: Use this when no player is seen close (can be default)
