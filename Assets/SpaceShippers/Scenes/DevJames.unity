@@ -955,7 +955,7 @@ GameObject:
   - component: {fileID: 934871398}
   - component: {fileID: 934871397}
   - component: {fileID: 934871396}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: cargoship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1422,7 +1422,7 @@ MonoBehaviour:
   _initialState: 1
   _behavior: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
   _acceptedAgressionLevel: 0.7
-  _acceptedFireAngle: 15
+  _acceptedFireAngle: 0.7
 --- !u!114 &1120260218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1781,7 +1781,7 @@ MonoBehaviour:
   _initialState: 1
   _behavior: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
   _acceptedAgressionLevel: 0.7
-  _acceptedFireAngle: 15
+  _acceptedFireAngle: 0.7
 --- !u!114 &1225470165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2299,7 +2299,7 @@ MonoBehaviour:
   _initialState: 1
   _behavior: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
   _acceptedAgressionLevel: 0.7
-  _acceptedFireAngle: 15
+  _acceptedFireAngle: 0.7
 --- !u!1 &1778072026
 GameObject:
   m_ObjectHideFlags: 0

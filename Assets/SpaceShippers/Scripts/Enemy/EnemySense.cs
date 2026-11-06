@@ -59,8 +59,6 @@ namespace SpaceShippers.Scripts.Enemy
         /// <returns>The position of the detected target, or the origin position if no target is detected.</returns>
         public Vector3 CheckTrigger(Transform origin)
         {
-            var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
-            
             if (Random.Range(0f, 1f) > _actionChance)
             {
                 return origin.position; // No action taken due to chance
@@ -68,8 +66,8 @@ namespace SpaceShippers.Scripts.Enemy
             
             var r = _senseType switch
             {
-                SenseType.Sight => CheckSight(origin) + noise,
-                SenseType.Radar => CheckRadar(origin) + noise,
+                SenseType.Sight => CheckSight(origin),
+                SenseType.Radar => CheckRadar(origin),
                 _ => origin.position
             };
             
@@ -80,6 +78,8 @@ namespace SpaceShippers.Scripts.Enemy
         {
             var direction = origin.TransformDirection(_senseDirection);
             var hits = Physics.OverlapSphere(origin.position, _senseRange, _senseMask);
+            var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
+            
             foreach (var hit in hits)
             {
                 if (!hit) continue;
@@ -95,7 +95,7 @@ namespace SpaceShippers.Scripts.Enemy
                 if (Vector3.Angle(direction, toTarget) <= _senseAngle)
                 {
                     // Target is within the sense angle
-                    return hit.transform.position;
+                    return hit.transform.position + noise;
                 }
             }
             return origin.position; // No target found, return origin position
@@ -104,10 +104,11 @@ namespace SpaceShippers.Scripts.Enemy
         private Vector3 CheckRadar(Transform origin)
         {
             var hits = Physics.OverlapSphere(origin.position, _senseRange, _senseMask);
+            var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
             if (hits.Length > 0)
             {
                 // Return the position of the first detected target
-                return hits[0].transform.position;
+                return hits[0].transform.position + noise;
             }
             return origin.position; // No target found, return origin position
         }

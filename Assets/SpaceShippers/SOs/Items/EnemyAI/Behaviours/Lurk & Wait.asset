@@ -17,10 +17,12 @@ MonoBehaviour:
     nextState: {fileID: 11400000, guid: 5e23aae8a9769b749ae02135553e34a7, type: 2}
   - sense: {fileID: 11400000, guid: b60d4f69188618c488d9af8eec69a78d, type: 2}
     nextState: {fileID: 11400000, guid: c878fb9f938072b4095538b601542d34, type: 2}
+  - sense: {fileID: 11400000, guid: b60d4f69188618c488d9af8eec69a78d, type: 2}
+    nextState: {fileID: 11400000, guid: b7e320766561c6444ab8c206e1b82e9a, type: 2}
   currentTrackSense: {fileID: 11400000, guid: b60d4f69188618c488d9af8eec69a78d, type: 2}
   isDefaultState: 1
   aggressionLevel: 0
   stateWeapon: {fileID: 0}
   allowMovement: 0
-  stateChangeChance: 0.25
+  stateChangeChance: 0.1
   _comments: Wait for a player to show up while using radar
