@@ -20,5 +20,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _actionChance: 0.8
-  _senseNoise: {x: 15, y: 15, z: 15}
+  _senseNoise: {x: 5, y: 5, z: 5}
   confidenceLevel: 0.8

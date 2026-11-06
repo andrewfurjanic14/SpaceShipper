@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf370968f4b4cd18771bc95efc0ccc8, type: 3}
   m_Name: SimpleSight
   m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.Enemy.EnemySense
-  _senseRange: 750
+  _senseRange: 250
   _senseDirection: {x: 0, y: 0, z: 1}
   _senseAngle: 65
   _senseType: 1
@@ -20,5 +20,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _actionChance: 1
-  _senseNoise: {x: 40, y: 40, z: 40}
+  _senseNoise: {x: 10, y: 10, z: 10}
   confidenceLevel: 0.95
