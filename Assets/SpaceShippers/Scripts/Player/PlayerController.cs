@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     #region Input Handling
     private PlayerInputActions _inputSystem;
-    private Vector2 _movementInput;
+    private Vector2 _steerInput;
     private float _rollInput;
     #endregion
 
@@ -48,55 +48,64 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         if (_inputSystem == null) return;
-        _inputSystem.Player.Dash.performed += _playerMovement.Dash;
-        _inputSystem.Player.Shoot.started  += OnShootStarted;
-        _inputSystem.Player.Shoot.canceled += OnShootCanceled;
-        _inputSystem.Player.Mine.started  += OnMineStarted;
-        // _inputSystem.Player.Mine.canceled += OnMineCanceled;
+        _inputSystem.Player.Dash.performed += OnDash;
+        _playerMovement.DashStateChanged += OnDashStateChanged;
+
+        _inputSystem.Player.Shoot.started  += OnShoot;
+        _inputSystem.Player.Shoot.canceled += OnShoot;
+
+        _inputSystem.Player.Mine.started   += OnMine;
+
         if (_inventoryCanvas && _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
         {
             _inputSystem.Player.ToggleUI.performed += inventoryUI.OnTogglePressed;
         }
+
         _inputSystem.Player.Enable();
     }
     private void OnDisable()
     {
-        _inputSystem.Player.Dash.performed -= _playerMovement.Dash;
-        _inputSystem.Player.Shoot.started  -= OnShootStarted;
-        _inputSystem.Player.Shoot.canceled -= OnShootCanceled;
-        _inputSystem.Player.Mine.started  -= OnMineStarted;
-        // _inputSystem.Player.Mine.canceled -= OnMineCanceled;
+        _inputSystem.Player.Dash.performed -= OnDash;
+
+        _inputSystem.Player.Shoot.started  -= OnShoot;
+        _inputSystem.Player.Shoot.canceled -= OnShoot;
+
+        _inputSystem.Player.Mine.started   -= OnMine;
+
         if (_inventoryCanvas && _inventoryCanvas.TryGetComponent<InventoryUI>(out var inventoryUI))
         {
             _inputSystem.Player.ToggleUI.performed -= inventoryUI.OnTogglePressed;
         }
+
         _inputSystem.Player.Disable();
 
-        if (_shooter != null)
+        if (_shooter.IsFiring)
             _shooter.StopFiring();
+        if (_miner.IsMining)
+            _miner.StopMining();
     }
 
     void Update()
     {
-        if (!_playerMovement) return;
-        // read inputs
-        _movementInput = _inputSystem.Player.Steer.ReadValue<Vector2>();
+        // Read inputs
+        _steerInput = _inputSystem.Player.Steer.ReadValue<Vector2>();
         _rollInput = _inputSystem.Player.Roll.ReadValue<float>();
+
         _isForwardThrusting = _inputSystem.Player.ForwardThrust.IsPressed();
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
-        _isShooting = _inputSystem.Player.Shoot.IsPressed(); // hold to fire
-        _isMining = _inputSystem.Player.Mine.IsPressed();
 
-        // update UI
+        _isShooting = _inputSystem.Player.Shoot.IsPressed(); // Hold to fire
+
+        // Update UI
         _dashMeter.value = _playerMovement.DashPercent;
         _ticksSinceLastStart++;
     }
 
     private void FixedUpdate()
     {
-        // movement
-        _playerMovement.Steer(_movementInput);
+        // Movement
+        _playerMovement.Steer(_steerInput);
         _playerMovement.Roll(_rollInput);
 
         if (_isBraking)
@@ -112,16 +121,53 @@ public class PlayerController : MonoBehaviour
             _playerMovement.ReverseThrust();
         }
     }
-    private void OnShootStarted(InputAction.CallbackContext ctx)
+    private void OnShoot(InputAction.CallbackContext ctx)
     {
-        _shooter.StartFiring();
+        if (_playerMovement.IsDashing) return;
+        if (ctx.action.IsPressed())
+        {
+            if (_miner.IsMining)
+                _miner.StopMining();
+            _shooter.StartFiring();
+        } 
+        else
+        {
+            _shooter.StopFiring();
+        }
     } 
-    private void OnShootCanceled(InputAction.CallbackContext ctx) => _shooter.StopFiring();
-    private void OnMineStarted(InputAction.CallbackContext ctx)
+    private void OnMine(InputAction.CallbackContext ctx)
     {
-        if (!_miner || _ticksSinceLastStart < 5) return;
-        if (_miner._isMining) _miner.StopMining();
-        else _miner.StartMining();
+        if (_playerMovement.IsDashing || _ticksSinceLastStart < 5) return;
+
+        if (!_miner.IsMining)
+        {
+            if (_shooter.IsFiring)
+                _shooter.StopFiring();
+            _miner.StartMining();
+            _isMining = true;
+        }
+        else
+        {
+            _miner.StopMining();
+            _isMining = false;
+        }
     } 
-    private void OnMineCanceled(InputAction.CallbackContext ctx) => _miner.StopMining();
+    private void OnDash(InputAction.CallbackContext ctx)
+    {
+        if (_miner.IsMining)
+            _miner.StopMining();
+        else if (_shooter.IsFiring)
+            _shooter.StopFiring();
+        
+        _playerMovement.Dash();
+    }
+    private void OnDashStateChanged()
+    {
+        if (_playerMovement.IsDashing) return;
+
+        if (_isShooting)
+            _shooter.StartFiring();
+        else if (_isMining)
+            _miner.StartMining();
+    }
 }
