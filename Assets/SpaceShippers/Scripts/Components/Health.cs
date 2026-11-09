@@ -10,10 +10,13 @@ public class Health : MonoBehaviour
     [SerializeField] private ItemTable _debrisTable;
 
     public event Action<float, float> Changed; // current, max
+
     public event Action Died;
 
     public bool IsDead { get; private set; }
-    
+
+    public void ScaleMaxHealth(float mult) {_maxHealth *= mult; _current = _maxHealth;}
+
     private void Awake()
     {
         _current = _maxHealth;

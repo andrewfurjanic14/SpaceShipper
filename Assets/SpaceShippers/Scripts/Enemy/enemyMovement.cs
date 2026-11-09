@@ -25,6 +25,8 @@ public class EnemyMovement : MonoBehaviour
 
     private Rigidbody rb;
 
+    public void ScaleSpeed(float mult) => moveSpeed *= mult;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();

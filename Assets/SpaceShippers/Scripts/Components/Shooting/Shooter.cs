@@ -26,6 +26,8 @@ public class Shooter : MonoBehaviour, IAimSource
     public Quaternion GetAimRotation(Transform muzzle) => 
         _useShipForward ? _ship.rotation : muzzle.rotation;
 
+    public float FireRateMultiplier = 1f;
+
     private void Awake()
     {
         if (_ship == null)
@@ -79,8 +81,8 @@ public class Shooter : MonoBehaviour, IAimSource
     {
         if (_weapon == null || _weapon.ProjectilePrefab == null) return;
         if (Time.time < _nextFireTime) return;
-            
-        _nextFireTime = Time.time + 1f / _weapon.FireRate; 
+
+        _nextFireTime = Time.time + 1f / (_weapon.FireRate * FireRateMultiplier);
 
         foreach (var muzzle in _muzzles)
         {
