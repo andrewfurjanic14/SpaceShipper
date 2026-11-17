@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace SpaceShippers.Scripts.Enemy
 {
@@ -9,7 +8,6 @@ namespace SpaceShippers.Scripts.Enemy
     public struct ActionPackage
     {
         public Vector3 targetPosition;
-        public SenseType senseType;
         public float responseLevel;
         public bool targetFound;
         public EnemyState nextState;
@@ -49,59 +47,40 @@ namespace SpaceShippers.Scripts.Enemy
 
         public ActionPackage TickState(Transform origin)
         {
+            // First check the primary sense for this state
+            var primaryStateSense = currentTrackSense.CheckTrigger(origin);
+            
             var ap = new ActionPackage
             {
-                targetPosition = currentTrackSense ? currentTrackSense.CheckTrigger(origin) : origin.position,
-                senseType = currentTrackSense ? currentTrackSense._senseType : SenseType.None,
-                transitionToNextState = false
+                targetPosition = primaryStateSense.targetLocation,
+                transitionToNextState = false,
+                targetFound = primaryStateSense.sensorTriggered,
+                responseLevel = primaryStateSense.confidenceLevel
             };
-            
-            ap.targetFound = ap.targetPosition != origin.position;
-            
-            if (currentTrackSense)
-            {
-                ap.responseLevel = aggressionLevel * currentTrackSense.confidenceLevel;
-            }
 
-            var stateFound = false; 
-            
-            if (!ap.targetFound)
+            // Check all transition packages for potential state changes (if they can find a better target)
+            foreach (var sensor in _transitionPackages)
             {
-                foreach (var package in _transitionPackages)
+                if (sensor.sense && sensor.nextState)
                 {
-                    var sense = package.sense;
-                    var nextState = package.nextState;
-                    
-                    if (sense)
+                    var senseResult = sensor.sense.CheckTrigger(origin);
+                    if (senseResult.sensorTriggered && senseResult.confidenceLevel > ap.responseLevel)
                     {
-                        var sensedPosition = sense.CheckTrigger(origin);
-                        if (sensedPosition != origin.position)
-                        {
-                            ap.targetPosition = sensedPosition;
-                            ap.senseType = sense._senseType;
-                            ap.nextState = nextState;
-                            ap.responseLevel = aggressionLevel * sense.confidenceLevel;
-                            ap.transitionToNextState = true; 
-                            stateFound = true;
-                        }
-                    }
-                    
-                    if (nextState && nextState.IsDefaultState && !stateFound)
-                    {
-                        ap.nextState = nextState;
+                        ap.targetPosition = senseResult.targetLocation;
+                        ap.responseLevel = senseResult.confidenceLevel;
                         ap.transitionToNextState = true;
-                        stateFound = true; 
+                        ap.nextState = sensor.nextState;
+                    }
+
+                    if (!ap.targetFound && sensor.nextState.IsDefaultState)
+                    {
+                        ap.nextState = sensor.nextState;
+                        ap.transitionToNextState = true;
                     }
                 }
-
-                if (!stateFound && _transitionPackages.Count > 0 && Random.Range(0f, 1f) < stateChangeChance)
-                {
-                    var index = Random.Range(0, _transitionPackages.Count);
-                    var package = _transitionPackages[index];
-                    ap.nextState = package.nextState;
-                    ap.transitionToNextState = true;
-                }
             }
+            
+            ap.responseLevel*= aggressionLevel; // Apply the state's aggression level to the response level
             
             return ap;
         }

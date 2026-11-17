@@ -23,7 +23,7 @@ namespace SpaceShippers.Scripts.Enemy
         [SerializeField] private float _acceptedFireAngle = 10f; // The maximum angle difference between the enemy's forward direction and the target position to fire the weapon
         
         private EnemyMovement controller = null;
-        private enemyDefaultState currentState = enemyDefaultState.Idle;
+        
         private Health health = null; 
         private bool isDebris = false;
         private Shooter shooter = null;
@@ -38,7 +38,7 @@ namespace SpaceShippers.Scripts.Enemy
 
         private void Start()
         {
-            currentState = enemyDefaultState.Patrol;
+            
         }
 
         private void Update()

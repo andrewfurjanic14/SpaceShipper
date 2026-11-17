@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace SpaceShippers.Scripts.Enemy
 {
@@ -7,6 +9,14 @@ namespace SpaceShippers.Scripts.Enemy
         None,
         Sight,
         Radar,
+    }
+
+    [Serializable]
+    public struct SenseResult
+    {
+        public Vector3 targetLocation;
+        public float confidenceLevel;
+        public bool sensorTriggered;
     }
     
     [CreateAssetMenu(fileName = "Sense", menuName = "Scriptable Objects/Enemy Sense", order = 0)]
@@ -46,37 +56,44 @@ namespace SpaceShippers.Scripts.Enemy
         /// Noise factor for the sense. This will add random variation to the sense.
         /// </summary>
         [SerializeField] private Vector3 _senseNoise = Vector3.zero;
-
-        /// <summary>
-        /// Confidence level for the sense. This can be used to determine how certain the enemy is about the detected target. A value of 1 means the enemy is fully confident, while a value of 0 means the enemy has no confidence in the detection.
-        /// </summary>
-        [SerializeField] public float confidenceLevel = 0.5f;
+        
+        [SerializeField] private float _confidenceNoise = 0.1f; // Noise factor for the confidence level (0-1)
         
         /// <summary>
         /// Checks if the sense is triggered and returns the position of the detected target. If no target is detected, it returns the origin position. The method also applies noise to the detected position based on the _senseNoise variable.
         /// </summary>
         /// <param name="origin">The origin of the sense.</param>
         /// <returns>The position of the detected target, or the origin position if no target is detected.</returns>
-        public Vector3 CheckTrigger(Transform origin)
+        public SenseResult CheckTrigger(Transform origin)
         {
+            var result = new SenseResult();
+            result.confidenceLevel = 0f;
+            result.sensorTriggered = false;
+            result.targetLocation = Vector3.zero;
+            
             if (Random.Range(0f, 1f) > _actionChance)
             {
-                return origin.position; // No action taken due to chance
+                return result; // No action taken due to chance
             }
             
             var r = _senseType switch
             {
                 SenseType.Sight => CheckSight(origin),
                 SenseType.Radar => CheckRadar(origin),
-                _ => origin.position
+                _ => result
             };
             
             return r;
         }
 
-        private Vector3 CheckSight(Transform origin)
+        private SenseResult CheckSight(Transform origin)
         {
             var direction = origin.TransformDirection(_senseDirection);
+            var r = new SenseResult();
+            r.confidenceLevel = 0f;
+            r.sensorTriggered = false; 
+            r.targetLocation = Vector3.zero;
+            
             var hits = Physics.OverlapSphere(origin.position, _senseRange, _senseMask);
             var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
             
@@ -95,22 +112,37 @@ namespace SpaceShippers.Scripts.Enemy
                 if (Vector3.Angle(direction, toTarget) <= _senseAngle)
                 {
                     // Target is within the sense angle
-                    return hit.transform.position + noise;
+                    r.targetLocation = hit.transform.position + noise;
+                    r.confidenceLevel = (r.targetLocation).magnitude / _senseRange;
+                    r.confidenceLevel = Math.Clamp(r.confidenceLevel + Random.Range(-_confidenceNoise, _confidenceNoise), 0f, 1f);
+                    r.sensorTriggered = true;
+                    return r;
                 }
             }
-            return origin.position; // No target found, return origin position
+            return r; // No target found, return origin position
         }
         
-        private Vector3 CheckRadar(Transform origin)
+        private SenseResult CheckRadar(Transform origin)
         {
+            var r = new SenseResult();
+            r.confidenceLevel = 0f;
+            r.sensorTriggered = false; 
+            r.targetLocation = Vector3.zero;
+            
             var hits = Physics.OverlapSphere(origin.position, _senseRange, _senseMask);
-            var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
+            
             if (hits.Length > 0)
             {
+                var noise = new Vector3(Random.Range(-_senseNoise.x, _senseNoise.x), Random.Range(-_senseNoise.y, _senseNoise.y), Random.Range(-_senseNoise.z, _senseNoise.z));
+
                 // Return the position of the first detected target
-                return hits[0].transform.position + noise;
+                r.targetLocation = hits[0].transform.position + noise;
+                r.confidenceLevel = (r.targetLocation).magnitude / _senseRange;
+                r.confidenceLevel = Math.Clamp(r.confidenceLevel + Random.Range(-_confidenceNoise, _confidenceNoise), 0f, 1f);
+                r.sensorTriggered = true;
+                return r;
             }
-            return origin.position; // No target found, return origin position
+            return r; // No target found, return 
         }
     }
 }

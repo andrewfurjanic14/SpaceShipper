@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf370968f4b4cd18771bc95efc0ccc8, type: 3}
   m_Name: SimpleRadar
   m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.Enemy.EnemySense
-  _senseRange: 500
+  _senseRange: 1000
   _senseDirection: {x: 0, y: 0, z: 1}
   _senseAngle: 360
   _senseType: 2
   _senseMask:
     serializedVersion: 2
-    m_Bits: 2688
-  _actionChance: 0.8
+    m_Bits: 2176
+  _actionChance: 0.9
   _senseNoise: {x: 50, y: 50, z: 50}
-  confidenceLevel: 0.3
+  _confidenceNoise: 0.1

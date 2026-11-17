@@ -19,7 +19,7 @@ MonoBehaviour:
     nextState: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
   currentTrackSense: {fileID: 11400000, guid: 5a70da634396daf499f96036b348cf81, type: 2}
   isDefaultState: 0
-  aggressionLevel: 0.8
+  aggressionLevel: 0.9
   stateWeapon: {fileID: 11400000, guid: 423030d2e89895148a8aebf6a8de3246, type: 2}
   allowMovement: 1
   stateChangeChance: 0.01

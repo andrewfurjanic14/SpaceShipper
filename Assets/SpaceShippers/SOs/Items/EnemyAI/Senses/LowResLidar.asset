@@ -18,7 +18,7 @@ MonoBehaviour:
   _senseType: 1
   _senseMask:
     serializedVersion: 2
-    m_Bits: 2688
+    m_Bits: 2176
   _actionChance: 1
   _senseNoise: {x: 5, y: 5, z: 5}
-  confidenceLevel: 0.9
+  _confidenceNoise: 0.1
