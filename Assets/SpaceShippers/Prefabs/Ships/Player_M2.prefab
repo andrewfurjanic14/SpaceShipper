@@ -28,7 +28,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6680717817797830777}
+  - {fileID: 5308930044846536824}
   m_Father: {fileID: 8309352869555293439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
@@ -327,7 +327,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4828515409455296459}
+  - component: {fileID: 6412370966126315572}
   - component: {fileID: 2520245557032499543}
   - component: {fileID: 7230302605178053087}
   m_Layer: 5
@@ -336,7 +336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6412370966126315572
 RectTransform:
   m_ObjectHideFlags: 0
@@ -402,7 +402,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6680717817797830777}
+  - component: {fileID: 5308930044846536824}
   - component: {fileID: 9016675157774769036}
   - component: {fileID: 8355814158773869331}
   m_Layer: 5
@@ -411,7 +411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5308930044846536824
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1137,10 +1137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72220aa9e3f434a7fa97aa5a0869a429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _shooter: {fileID: 0}
-  _miner: {fileID: 0}
   _inventoryCanvas: {fileID: 7000470367705571860}
-  _dashMeter: {fileID: 2370109850178969531}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1292,7 +1289,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4828515409455296459}
+  - {fileID: 6412370966126315572}
   - {fileID: 737423272453088462}
   m_Father: {fileID: 3156318344456325130}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1342,7 +1339,7 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
-  m_FillRect: {fileID: 6680717817797830777}
+  m_FillRect: {fileID: 5308930044846536824}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0

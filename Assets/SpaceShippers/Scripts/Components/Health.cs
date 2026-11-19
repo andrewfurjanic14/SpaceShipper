@@ -48,7 +48,7 @@ public class Health : MonoBehaviour
     public void Revive(float HP)
     {
         IsDead = false;
-        _current = HP; 
+        Current = HP; 
     }
     
     public void MakeDebris()

@@ -51,14 +51,14 @@ public class Shooter : MonoBehaviour, IAimSource
 
     public void StartFiring()
     {
-        _isFiring = true;
+        IsFiring = true;
         if (_trajectoryPreview)
             _trajectoryPreview.SetVisible(this, true);
     }
 
     public void StopFiring()
     {
-        _isFiring = false;
+        IsFiring = false;
         if (_trajectoryPreview)
             _trajectoryPreview.SetVisible(this, false);
     }
