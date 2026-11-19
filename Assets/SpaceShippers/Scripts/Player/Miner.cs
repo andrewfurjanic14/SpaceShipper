@@ -22,7 +22,7 @@ public class Miner : MonoBehaviour, IAimSource
     [SerializeField] private LayerMask _mask = ~0;
 
     // Runtime
-    public bool _isMining { get; private set; }
+    public bool IsMining { get; private set; }
     private float _nextTick;
 
     // IAimSource Accessors
@@ -54,7 +54,7 @@ public class Miner : MonoBehaviour, IAimSource
 
     private void Update()
     {
-        if (!_isMining || Time.time < _nextTick) return;
+        if (!IsMining || Time.time < _nextTick) return;
 
         _nextTick = Time.time + _interval;
         Mine();
@@ -62,14 +62,14 @@ public class Miner : MonoBehaviour, IAimSource
 
     public void StartMining()
     {
-        _isMining = true;
+        IsMining = true;
         if (_trajectoryPreview != null)
             _trajectoryPreview.SetVisible(this, true);
     }
 
     public void StopMining()
     {
-        _isMining = false;
+        IsMining = false;
         if (_trajectoryPreview != null)
             _trajectoryPreview.SetVisible(this, false);
     }

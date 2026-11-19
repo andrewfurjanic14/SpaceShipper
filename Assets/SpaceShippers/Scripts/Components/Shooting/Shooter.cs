@@ -16,9 +16,9 @@ public class Shooter : MonoBehaviour, IAimSource
     [SerializeField] private TrajectoryStyle _trajectoryStyle;
 
     // Runtime
+    public bool IsFiring { get; private set; }
     private int _projectileLayer;
     private float _nextFireTime;
-    private bool _isFiring;
 
     // IAimSource Accessors
     public Transform Ship => _ship;
@@ -65,7 +65,7 @@ public class Shooter : MonoBehaviour, IAimSource
 
     private void Update()
     {
-        if (_isFiring) TryFire();
+        if (IsFiring) TryFire();
     }
 
     // Random tilt for one bullet: a random point in a circle, used as yaw (x) and pitch (y)

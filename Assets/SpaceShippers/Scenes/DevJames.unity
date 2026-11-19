@@ -321,7 +321,34 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &97478159
+--- !u!114 &244926261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244926254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58b52f930dd4f4b49b05169e6aaf21d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemNode
+  _itemTable: {fileID: 11400000, guid: d448120ec29974a9fad97b68ac8efe70, type: 2}
+--- !u!114 &244926262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244926254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health
+  _max: 100
+  _debrisTable: {fileID: 0}
+--- !u!4 &244926263
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -462,8 +489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  _maxHealth: 100
-  _current: 0
+  _max: 100
   _debrisTable: {fileID: 11400000, guid: d2d1fe6e3f51f1942be037e27059d152, type: 2}
 --- !u!65 &97478166
 BoxCollider:
@@ -10337,8 +10363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  _maxHealth: 100
-  _current: 0
+  _max: 100
   _debrisTable: {fileID: 11400000, guid: d2d1fe6e3f51f1942be037e27059d152, type: 2}
 --- !u!65 &1897246902
 BoxCollider:
@@ -11093,8 +11118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageableEntity
-  _maxHealth: 100
-  _current: 0
+  _max: 100
   _debrisTable: {fileID: 11400000, guid: d2d1fe6e3f51f1942be037e27059d152, type: 2}
 --- !u!65 &2002988750
 BoxCollider:
@@ -11587,6 +11611,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6606451695553433917, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680717817797830777, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6680717817797830777, guid: ee6454bc3cf1c44f4916055dcc6a8c5d, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}

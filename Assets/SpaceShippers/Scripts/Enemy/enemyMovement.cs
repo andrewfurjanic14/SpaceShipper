@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System;
+using SpaceShippers.Scripts.PCG;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -68,7 +69,7 @@ public class EnemyMovement : MonoBehaviour
 
         if (CurrentlyOrbiting)
         {
-            var sph = CurrentlyOrbiting.GetComponent<ProceduralSphere>();
+            var sph = CurrentlyOrbiting.GetComponent<SphereGen>();
             if (sph)
             {
                 planetRadius = sph.radius;
