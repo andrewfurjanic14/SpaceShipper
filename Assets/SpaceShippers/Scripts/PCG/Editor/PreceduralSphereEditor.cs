@@ -3,14 +3,14 @@ using UnityEditor;
 using System.IO;
 using SpaceShippers.Scripts.PCG;
 
-[CustomEditor(typeof(ProceduralSphere), true)]
+[CustomEditor(typeof(SphereGen), true)]
 public class ProceduralSphereEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        ProceduralSphere sphereScript = (ProceduralSphere)target;
+        SphereGen sphereScript = (SphereGen)target;
 
         GUILayout.Space(15);
 
