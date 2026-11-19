@@ -114,6 +114,7 @@ MonoBehaviour:
   sphereTexture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
   sphereMaterial: {fileID: 2100000, guid: a1a0bfa65f4dc4842998dec37fe61bb5, type: 2}
   planetComputeShader: {fileID: 7200000, guid: 8288e790fee24a10a3d52c76b26b462b, type: 3}
+  dataCache: {fileID: 0}
   octaves: 8
   baseNoiseScale: 2.5
   maxNoiseStrength: 20
@@ -161,9 +162,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e958588ddcb1a439ad50f04ad61dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GravField
-  detectionRadius: 10000
-  targetLayer:
+  _radius: 5
+  _targetLayer:
     serializedVersion: 2
-    m_Bits: 10240
-  MassConst: 3986000
-  TimeBetweenUpdates: 1
+    m_Bits: 0
+  _gravityStrength: 39860
+  _scanInterval: 1
+  _removalBuffer: []

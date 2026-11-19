@@ -2,7 +2,7 @@
 
 namespace SpaceShippers.Scripts.PCG
 {
-    public class ProceduralPlanet : ProceduralSphere
+    public class ProceduralPlanet : SphereGen
     {
         private static readonly int LongitudeSegments = Shader.PropertyToID("longitudeSegments");
         private static readonly int VertexBuffer = Shader.PropertyToID("vertexBuffer");
@@ -280,5 +280,4 @@ namespace SpaceShippers.Scripts.PCG
         }
     }
 }
-
 
