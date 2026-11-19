@@ -5,32 +5,33 @@ using UnityEngine.Serialization;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private float _maxHealth = 100f;
-    [SerializeField] private float _current;
+    [SerializeField] private float _max = 100f;
     [SerializeField] private ItemTable _debrisTable;
 
-    public event Action<float, float> Changed; // current, max
+    public event Action<float, float> Changed; // Current, Max
     public event Action Died;
 
     public bool IsDead { get; private set; }
+    public float Current { get; private set; }
+    public float Max => _max;
     
     private void Awake()
     {
-        _current = _maxHealth;
+        Current = _max;
     }
 
     public void TakeDamage(float amount)
     {
         if (IsDead || amount <= 0f) return;
 
-        _current = Mathf.Max(0f, _current - amount);
+        Current = Mathf.Max(0f, Current - amount);
 
         // Changed
         if (Changed != null)
-            Changed.Invoke(_current, _maxHealth);
+            Changed.Invoke(Current, _max);
 
         // Died
-        if (_current <= 0f)
+        if (Current <= 0f)
             Die();
     }
 
@@ -52,7 +53,7 @@ public class Health : MonoBehaviour
             var r = gameObject.AddComponent<ResourceNode>();
             r._itemTable = _debrisTable;
             IsDead = false; 
-            _current = _maxHealth;
+            Current = _max;
         }
     }
 }

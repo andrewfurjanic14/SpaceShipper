@@ -7,15 +7,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Miner))]
 public class PlayerController : MonoBehaviour
 {
-    #region Scripts
-    private PlayerMovement _playerMovement;
-    [SerializeField] private Shooter _shooter;
-    [SerializeField] private Miner _miner;
+    #region Dependencies
     [SerializeField] private Canvas _inventoryCanvas;
-    #endregion
-
-    #region UI
-    [SerializeField] private Slider _dashMeter;
+    private PlayerMovement _playerMovement;
+    private Shooter _shooter;
+    private Miner _miner;
     #endregion
 
     #region States
@@ -95,10 +91,6 @@ public class PlayerController : MonoBehaviour
         _isReverseThrusting = _inputSystem.Player.ReverseThrust.IsPressed();
         _isBraking = _inputSystem.Player.Brake.IsPressed();
 
-        _isShooting = _inputSystem.Player.Shoot.IsPressed(); // Hold to fire
-
-        // Update UI
-        _dashMeter.value = _playerMovement.DashPercent;
         _ticksSinceLastStart++;
     }
 
