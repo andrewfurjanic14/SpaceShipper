@@ -1,3 +1,4 @@
+using SpaceShippers.Scripts.Player;
 using UnityEngine;
 
 [RequireComponent(typeof(BarUI))]
