@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor.Search;
-using UnityEditor.Callbacks;
 
 public class GravField : MonoBehaviour
 {

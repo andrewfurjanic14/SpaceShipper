@@ -336,8 +336,8 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &4828515409455296459
+  m_IsActive: 0
+--- !u!224 &6412370966126315572
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -411,8 +411,8 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &6680717817797830777
+  m_IsActive: 0
+--- !u!224 &5308930044846536824
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1137,7 +1137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72220aa9e3f434a7fa97aa5a0869a429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  _shooter: {fileID: 0}
+  _miner: {fileID: 0}
   _inventoryCanvas: {fileID: 7000470367705571860}
+  _dashMeter: {fileID: 2370109850178969531}
 --- !u!114 &7306505762539681633
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,7 +35,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1500, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -115,7 +115,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 202
+  m_Radius: 205
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4733912732935376053
 MonoBehaviour:
@@ -129,11 +129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e958588ddcb1a439ad50f04ad61dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GravField
-  _radius: 5
+  _radius: 1000
   _targetLayer:
     serializedVersion: 2
     m_Bits: 4096
-  _gravityStrength: 39860
+  _gravityStrength: 398600
   _scanInterval: 1
   _removalBuffer: []
 --- !u!54 &-7522133018673146104
@@ -144,7 +144,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3858081049838771276}
   serializedVersion: 5
-  m_Mass: 5000
+  m_Mass: 2500
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -175,9 +175,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be6025a0673245ee898c5f7e1cff2b65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.PCG.Orbit
-  moveSpeed: 25
-  altitude: 3000
-  orbitAxis: {x: 0, y: 1, z: 0}
+  moveSpeed: 22
+  orbitAxis: {x: 0, y: 0.9, z: 0.1}
   orbitalMask:
     serializedVersion: 2
     m_Bits: 64
@@ -186,7 +185,8 @@ MonoBehaviour:
   customMoonSpin: 0
   moonSpinAxis: {x: 0, y: 1, z: 0}
   moonSpinSpeed: 60
-  CurrentlyOrbiting: {fileID: 0}
+  _currentlyOrbiting: {fileID: 0}
+  mass: 5000
 --- !u!114 &4008976201919760275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,8 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fdbd85f1d1ea2e46a6b494b37ac80b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  _maxHealth: 5000
+  _maxHealth: 2500
   _current: 0
+  _debrisTable: {fileID: 0}
 --- !u!114 &1312295194486247921
 MonoBehaviour:
   m_ObjectHideFlags: 0

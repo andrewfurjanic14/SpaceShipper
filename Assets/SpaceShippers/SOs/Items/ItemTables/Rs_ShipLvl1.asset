@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Rs_ShipLvl1
   m_EditorClassIdentifier: Assembly-CSharp::ItemTable
   _entries:
-  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
+  - Item: {fileID: 11400000, guid: c17677a67338b4106940b549756e2ef5, type: 2}
     Weight: 5
-    Amount: 5
-  - Item: {fileID: 11400000, guid: 064a851611f62494a98e3700080d8efc, type: 2}
-    Weight: 5
-    Amount: 10
+    Amount: 3
+  - Item: {fileID: 11400000, guid: df7ae081462f11e49b7526661b72316a, type: 2}
+    Weight: 10
+    Amount: 15

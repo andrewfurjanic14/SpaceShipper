@@ -103,11 +103,11 @@ namespace SpaceShippers.Scripts.PCG
 
             if (!CurrentlyOrbiting) return;
 
-            // 1. Advance the orbit loop path angle
+            // Advance the orbit loop path angle
             float angularVelocity = (targetDistance > 0.001f) ? (moveSpeed / targetDistance) : 0f;
             currentAngle += angularVelocity * Time.fixedDeltaTime;
 
-            // 2. Compute path position coordinates using a consistent orthonormal basis
+            // Compute path position coordinates using a consistent orthonormal basis
             Vector3 planetCenter = CurrentlyOrbiting.transform.position;
             Vector3 normAxis = orbitAxis.normalized;
             
@@ -121,15 +121,15 @@ namespace SpaceShippers.Scripts.PCG
             Vector3 orbitalOffset = (planeRight * Mathf.Cos(currentAngle) + planeForward * Mathf.Sin(currentAngle)) * targetDistance;
             Vector3 desiredPosition = planetCenter + orbitalOffset;
 
-            if (rb != null)
+            if (rb)
             {
                 rb.MovePosition(desiredPosition);
 
-                // 3. Keep velocity vectors matched up
+                // Keep velocity vectors matched up
                 Vector3 tangentDirection = (-planeRight * Mathf.Sin(currentAngle) + planeForward * Mathf.Cos(currentAngle)).normalized;
                 rb.linearVelocity = tangentDirection * moveSpeed;
 
-                // 4. Calculate core directional face targets
+                // Calculate core directional face targets
                 Vector3 surfaceNormal = (desiredPosition - planetCenter).normalized;
 
                 if (tidallyLocked)
@@ -154,7 +154,7 @@ namespace SpaceShippers.Scripts.PCG
 
         private void Update()
         {
-            if (!CurrentlyOrbiting || rb == null) return;
+            if (!CurrentlyOrbiting || !rb) return;
 
             rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime));
         }
@@ -168,7 +168,7 @@ namespace SpaceShippers.Scripts.PCG
                 // Capture current distance seamlessly as our target orbit radius from the new parent
                 targetDistance = Vector3.Distance(transform.position, CurrentlyOrbiting.transform.position);
 
-                if (rb != null)
+                if (rb)
                 {
                     float currentSpeed = rb.linearVelocity.magnitude;
                     if (currentSpeed > 0.1f)
@@ -191,7 +191,7 @@ namespace SpaceShippers.Scripts.PCG
                 }
                 
                 var health = CurrentlyOrbiting.GetComponent<Health>();
-                if (health != null)
+                if (health)
                 {
                     health.Died += HandleTargetDeath;
                 }
@@ -200,10 +200,10 @@ namespace SpaceShippers.Scripts.PCG
 
         private void HandleTargetDeath()
         {
-            if (CurrentlyOrbiting != null)
+            if (CurrentlyOrbiting)
             {
                 var health = CurrentlyOrbiting.GetComponent<Health>();
-                if (health != null)
+                if (health)
                 {
                     health.Died -= HandleTargetDeath;
                 }
@@ -211,7 +211,7 @@ namespace SpaceShippers.Scripts.PCG
             CurrentlyOrbiting = null;
         }
 
-        public void FindNearestOrbitableObject()
+        private void FindNearestOrbitableObject()
         {
             var results = new Collider[100];
             var size = Physics.OverlapSphereNonAlloc(transform.position, 10000f, results, orbitalMask);

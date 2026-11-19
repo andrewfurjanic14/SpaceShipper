@@ -1,28 +1,40 @@
 using System;
 using SpaceShippers.Scripts.PCG;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private Transform target;
-    public Transform Target => target;
-
-    [SerializeField] private float moveSpeed = 8f;
-    [SerializeField] private float turnSpeed = 5f; // Used as the Slerp speed multiplier now
+    [Header("Steering & Movement Forces")]
+    [SerializeField] private float _maxMoveSpeed = 8f;
+    [SerializeField] private float _acceleration = 5f;
+    [SerializeField] private float _brakeForce = 7f;
+    [SerializeField] private float _linearDampening = 1f;
+    [SerializeField] private float turnSpeed = 5f; // Slerp speed multiplier
     [SerializeField] private float stopDistance = 3f;
-    [SerializeField] private float maxAccel = 5f; // Used for smooth speed lerping
 
+    [Header("Pathfinding & Obstacle Avoidance")]
+    [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private float obstacleCheckDistance = 15f;
+    [SerializeField] private float waypointReachedThreshold = 1.5f;
+    [SerializeField] private float baseRePathThreshold = 3.0f; // Distance target must move to trigger a full re-path
+
+    [Header("Orbit Settings")]
     [SerializeField] private float altitude = 5f;
     [SerializeField] private Vector3 orbitAxis = Vector3.up;
     [SerializeField] private LayerMask orbitalMask;
 
+    private float _currentSpeed = 0f;
     const uint refreshInterval = 100;
     private uint refreshCount = 0;
 
     private float planetRadius = 5f;
     public GameObject CurrentlyOrbiting { get; private set; } = null;
+
+    // Path Data 
+    private List<Vector3> _pathWaypoints = new List<Vector3>();
+    private int _currentWaypointIndex = 0;
+    private Vector3 _lastTargetPosition;
 
     private Rigidbody rb;
 
@@ -30,23 +42,10 @@ public class EnemyMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
+        rb.linearDamping = _linearDampening;
     }
 
-    private void Start()
-    {
-        if (Random.value < 0.5f)
-        {
-            GameObject cargo = GameObject.Find("cargoship");
-            if (cargo != null) target = cargo.transform;
-        }
-        else
-        {
-            PlayerController player = FindFirstObjectByType<PlayerController>();
-            if (player != null) target = player.transform;
-        }
-    }
-
-    public void FindNearestOrbitableObject()
+    private void FindNearestOrbitableObject()
     {
         var results = new Collider[100];
         var size = Physics.OverlapSphereNonAlloc(rb.position, 100000f, results, orbitalMask);
@@ -77,26 +76,29 @@ public class EnemyMovement : MonoBehaviour
             }
             else
             {
-                Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, 
-                    out RaycastHit hit, 1000f);
-                planetRadius = (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance;
+                if (Physics.Raycast(transform.position, (CurrentlyOrbiting.transform.position - transform.position).normalized, out RaycastHit hit, 1000f))
+                {
+                    planetRadius = (transform.position - CurrentlyOrbiting.transform.position).magnitude - hit.distance;
+                }
             }
         }
     }
 
     private void FixedUpdate()
     {
-        // Physics updates can go here if needed
+        rb.AddForce(transform.forward * _currentSpeed, ForceMode.Force);
     }
 
     public void Idle(float deltaTime)
     {
-        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, deltaTime * maxAccel);
+        ApplyBrakes(deltaTime);
+        _pathWaypoints.Clear();
     }
 
     public void Patrol(float deltaTime)
     {
-        // 1. Ensure we have a target to orbit
+        _pathWaypoints.Clear(); // Clear path when switching to patrol
+
         if (refreshCount-- <= 0)
         {
             refreshCount = refreshInterval;
@@ -108,12 +110,10 @@ public class EnemyMovement : MonoBehaviour
         }
 
         Vector3 desiredDirection;
-
-        // 2. Check for obstacles ahead
         RaycastHit hit;
         Debug.DrawRay(transform.position, transform.forward * 100f, Color.cyan);
 
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f, obstacleMask, QueryTriggerInteraction.Ignore))
         {
             desiredDirection = Vector3.Reflect(transform.forward, hit.normal).normalized;
         }
@@ -124,16 +124,15 @@ public class EnemyMovement : MonoBehaviour
                 FindNearestOrbitableObject();
                 if (!CurrentlyOrbiting) return;
             }
-            // 3. True Perpendicular Orbital Mechanics
-            Vector3 planetCenter = CurrentlyOrbiting.transform.position;
-            Vector3 radialVector = transform.position - planetCenter;
-            float currentDistance = radialVector.magnitude;
-            Vector3 surfaceNormal = radialVector.normalized;
+            
+            var planetCenter = CurrentlyOrbiting.transform.position;
+            var radialVector = transform.position - planetCenter;
+            var currentDistance = radialVector.magnitude;
+            var surfaceNormal = radialVector.normalized;
 
-            float targetDistance = planetRadius + altitude;
+            var targetDistance = planetRadius + altitude;
 
-            // Safe Cross Product: Check if orbitAxis and surfaceNormal are parallel (at the poles)
-            Vector3 tangentDirection = Vector3.Cross(orbitAxis, surfaceNormal);
+            var tangentDirection = Vector3.Cross(orbitAxis, surfaceNormal);
             if (tangentDirection.sqrMagnitude < 0.001f)
             {
                 // Fallback axis to prevent zeroing out near poles
@@ -143,38 +142,140 @@ public class EnemyMovement : MonoBehaviour
             tangentDirection.Normalize();
 
             // Clamped altitude correction so it never overpowers the orbit direction
-            float distanceError = currentDistance - targetDistance;
-            float maxCorrectionPull = 0.3f; // Limits how hard it pulls inward/outward
-            Vector3 correctionVector =
+            var distanceError = currentDistance - targetDistance;
+            const float maxCorrectionPull = 0.3f; // Limits how hard it pulls inward/outward
+            var correctionVector =
                 -surfaceNormal * Mathf.Clamp(distanceError, -maxCorrectionPull, maxCorrectionPull);
 
             // Combine tangent movement with safe altitude correction
             desiredDirection = (tangentDirection + correctionVector).normalized;
         }
 
-        // 4. Smooth Rotation using Quaternion.Slerp over time
         if (CurrentlyOrbiting)
         {
-            Vector3 surfaceNormal = (transform.position - CurrentlyOrbiting.transform.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(desiredDirection, surfaceNormal);
+            var surfaceNormal = (transform.position - CurrentlyOrbiting.transform.position).normalized;
+            var targetRotation = Quaternion.LookRotation(desiredDirection, surfaceNormal);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
         }
 
-        // 5. Smoothly Lerp up to the target movement speed
-        Vector3 targetVelocity = transform.forward * moveSpeed;
-        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
+        Accelerate(deltaTime);
     }
     
-    public void Chase(float deltaTime)
+    public void MoveTowards(Vector3 targetPosition, float deltaTime)
     {
-        if (!target) return;
+        var distanceToTarget = Vector3.Distance(transform.position, targetPosition);
 
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
+        // Determine re-pathing threshold based on distance:
+        // Closer to target = smaller threshold (more willing/frequent to recalculate), fewer steps needed.
+        // Farther away = larger threshold (sticks to cached path longer, aims broadly).
+        var dynamicRePathThreshold = Mathf.Lerp(0.5f, baseRePathThreshold, Mathf.Clamp01(distanceToTarget / 50f));
+        var targetMovementDelta = Vector3.Distance(targetPosition, _lastTargetPosition);
 
-        Vector3 targetVelocity = transform.forward * moveSpeed;
-        rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, targetVelocity, maxAccel * deltaTime);
+        // Check if we need to generate a new path
+        var needsNewPath = _pathWaypoints.Count == 0 || 
+                           targetMovementDelta > dynamicRePathThreshold || 
+                           _currentWaypointIndex >= _pathWaypoints.Count;
+
+        if (needsNewPath)
+        {
+            GeneratePath(targetPosition, distanceToTarget);
+            _lastTargetPosition = targetPosition;
+        }
+
+        // Traverse current waypoint if valid
+        var steeringTarget = targetPosition;
+        if (_pathWaypoints.Count > 0 && _currentWaypointIndex < _pathWaypoints.Count)
+        {
+            steeringTarget = _pathWaypoints[_currentWaypointIndex];
+
+            // If close enough to current waypoint, advance to the next one
+            if (Vector3.Distance(transform.position, steeringTarget) < waypointReachedThreshold)
+            {
+                _currentWaypointIndex++;
+                if (_currentWaypointIndex < _pathWaypoints.Count)
+                {
+                    steeringTarget = _pathWaypoints[_currentWaypointIndex];
+                }
+            }
+        }
+
+        // Calculate direction to current steering target with obstacle avoidance raycast
+        var desiredDirection = (steeringTarget - transform.position).normalized;
+        var checkDist = Mathf.Min(Vector3.Distance(transform.position, steeringTarget), obstacleCheckDistance);
+        
+        Debug.DrawRay(transform.position, desiredDirection * checkDist, Color.yellow);
+
+        if (Physics.Raycast(transform.position, desiredDirection, out RaycastHit hit, checkDist, obstacleMask, QueryTriggerInteraction.Ignore))
+        {
+            desiredDirection = Vector3.Reflect(desiredDirection, hit.normal).normalized;
+        }
+
+        if (desiredDirection != Vector3.zero)
+        {
+            var targetRotation = Quaternion.LookRotation(desiredDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * deltaTime);
+        }
+
+        // Accelerate when far, brake when within stop distance
+        if (distanceToTarget > stopDistance)
+        {
+            Accelerate(deltaTime);
+        }
+        else
+        {
+            ApplyBrakes(deltaTime);
+        }
     }
-    
+
+    private void GeneratePath(Vector3 targetPosition, float distanceToTarget)
+    {
+        _pathWaypoints.Clear();
+        _currentWaypointIndex = 0;
+
+        // If far away, use fewer intermediate steps (just the target or a simple midpoint)
+        // If close, we can map precise adjustments or direct line-of-sight
+        var midPoint = Vector3.Lerp(transform.position, targetPosition, 0.5f);
+        if (distanceToTarget > 30f)
+        {
+            // Far away: Create a simpler path with fewer steps (e.g., just a halfway check and target)
+
+            // Offset midpoint slightly if blocked
+            if (Physics.Raycast(transform.position, (targetPosition - transform.position).normalized, out RaycastHit hit, 15f, obstacleMask))
+            {
+                midPoint += hit.normal * 5f; 
+            }
+            
+            _pathWaypoints.Add(midPoint);
+        }
+
+        // Closer: Direct tracking with tighter resolution
+        _pathWaypoints.Add(targetPosition);
+    }
+
+    private void Accelerate(float deltaTime)
+    {
+        _currentSpeed += _acceleration * deltaTime;
+        _currentSpeed = Mathf.Min(_currentSpeed, _maxMoveSpeed);
+    }
+
+    private void ApplyBrakes(float deltaTime)
+    {
+        if (_currentSpeed > 0)
+        {
+            _currentSpeed -= _brakeForce * deltaTime;
+            if (_currentSpeed < 0) _currentSpeed = 0;
+        }
+        else if (_currentSpeed < 0)
+        {
+            _currentSpeed += _brakeForce * deltaTime;
+            if (_currentSpeed > 0) _currentSpeed = 0;
+        }
+        else
+        {
+            _currentSpeed = 0;
+        }
+
+        if (Mathf.Abs(_currentSpeed) < 0.1f)
+            _currentSpeed = 0;
+    }
 }
