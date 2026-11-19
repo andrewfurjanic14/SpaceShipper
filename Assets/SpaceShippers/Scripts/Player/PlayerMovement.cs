@@ -83,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
         else if (_currentSpeed > _maxMoveSpeed) _currentSpeed = _maxMoveSpeed;
     }
 
-    public void Dash(InputAction.CallbackContext ctx)
+    public void Dash()
     {
         if (IsDashing) return;
         if (!_energy.TrySpend(_dashCost))

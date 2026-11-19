@@ -177,7 +177,7 @@ namespace SpaceShippers.Scripts.PCG
                     }
                 }
 
-                var sph = CurrentlyOrbiting.GetComponent<ProceduralSphere>();
+                var sph = CurrentlyOrbiting.GetComponent<SphereGen>();
                 if (sph)
                 {
                     planetRadius = sph.radius;
