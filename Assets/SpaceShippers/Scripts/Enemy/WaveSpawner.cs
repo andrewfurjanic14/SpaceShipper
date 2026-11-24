@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject[] enemyPrefab;
     [SerializeField] private Transform cargoship;
     [SerializeField] private float spawnDistance = 350f;
 
@@ -19,11 +19,13 @@ public class WaveSpawner : MonoBehaviour
     {
         if (cargoship == null) return;
 
+        int len = enemyPrefab.Length;
+
         for (int i = 0; i < count; i++)
         {
             Vector3 pos = cargoship.position + Random.onUnitSphere * spawnDistance;
             Quaternion rot = Quaternion.LookRotation(cargoship.position - pos);
-            GameObject enemy = Instantiate(enemyPrefab, pos, rot);
+            GameObject enemy = Instantiate(enemyPrefab[i % len], pos, rot);
 
             enemy.GetComponent<Health>().ScaleMaxHealth(difficulty);
             enemy.GetComponent<EnemyMovement>().ScaleSpeed(difficulty);

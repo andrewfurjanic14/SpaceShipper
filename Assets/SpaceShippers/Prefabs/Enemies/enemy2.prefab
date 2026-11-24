@@ -205,7 +205,7 @@ MonoBehaviour:
   _spreadDegrees: 10
   _muzzles:
   - {fileID: 5405129606669736415}
-  _ship: {fileID: 0}
+  _ship: {fileID: 6764400138438618691}
   _useShipForward: 1
   _trajectoryPreview: {fileID: 0}
   _trajectoryStyle: {fileID: 0}
@@ -224,11 +224,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.Enemy.StateMachine
   targetMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192
   _debrisTable: {fileID: 0}
   _debrisHealth: 50
-  _initialState: 1
-  _behavior: {fileID: 11400000, guid: 5e23aae8a9769b749ae02135553e34a7, type: 2}
+  _initialState: 0
+  _behavior: {fileID: 11400000, guid: 21dde0b7c7f7af04e9b11b46777ca022, type: 2}
   _acceptedAgressionLevel: 0.5
   _acceptedFireAngle: 10
 --- !u!1 &1675709011247805163
