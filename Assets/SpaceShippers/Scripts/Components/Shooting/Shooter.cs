@@ -19,6 +19,8 @@ public class Shooter : MonoBehaviour, IAimSource
     public bool IsFiring { get; private set; }
     private int _projectileLayer;
     private float _nextFireTime;
+    public float FireRateMultiplier = 1f;
+
 
     // IAimSource Accessors
     public Transform Ship => _ship;
@@ -80,7 +82,7 @@ public class Shooter : MonoBehaviour, IAimSource
         if (!_weapon || !_weapon.ProjectilePrefab) return;
         if (Time.time < _nextFireTime) return;
             
-        _nextFireTime = Time.time + 1f / _weapon.FireRate; 
+        _nextFireTime = Time.time + 1f / (_weapon.FireRate* FireRateMultiplier);
 
         foreach (var muzzle in _muzzles)
         {

@@ -1048,6 +1048,7 @@ GameObject:
   - component: {fileID: 2018331997198432620}
   - component: {fileID: 2483319319252019005}
   - component: {fileID: 8617996456563379163}
+  - component: {fileID: 4076814081211052013}
   m_Layer: 7
   m_Name: Player_M2
   m_TagString: Player
@@ -1224,6 +1225,7 @@ MonoBehaviour:
   _useShipForward: 1
   _trajectoryPreview: {fileID: 8617996456563379163}
   _trajectoryStyle: {fileID: 11400000, guid: e4e00c41e9879407388b2e774581cc04, type: 2}
+  FireRateMultiplier: 1
 --- !u!114 &2483319319252019005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1258,6 +1260,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b42a440e7c2794c3197a45dac4b9052c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrajectoryPreview
+--- !u!114 &4076814081211052013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7314602444589515209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39c0a80f0628147afbf0a13cab39b569, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceShippers.Scripts.Player.Energy
+  _max: 100
+  _rechargeRate: 5
 --- !u!1 &8210812442488661934
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,12 +18,14 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private float obstacleCheckDistance = 15f;
     [SerializeField] private float waypointReachedThreshold = 1.5f;
+
     [SerializeField] private float baseRePathThreshold = 3.0f; // Distance target must move to trigger a full re-path
 
     [Header("Orbit Settings")]
     [SerializeField] private float altitude = 5f;
     [SerializeField] private Vector3 orbitAxis = Vector3.up;
     [SerializeField] private LayerMask orbitalMask;
+
 
     private float _currentSpeed = 0f;
     const uint refreshInterval = 100;
@@ -36,6 +38,8 @@ public class EnemyMovement : MonoBehaviour
     private List<Vector3> _pathWaypoints = new List<Vector3>();
     private int _currentWaypointIndex = 0;
     private Vector3 _lastTargetPosition;
+    public void ScaleSpeed(float mult) => _maxMoveSpeed *= mult;
+
 
     private Rigidbody rb;
 

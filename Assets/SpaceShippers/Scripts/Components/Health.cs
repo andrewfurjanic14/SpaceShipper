@@ -14,7 +14,9 @@ public class Health : MonoBehaviour
     public bool IsDead { get; private set; }
     public float Current { get; private set; }
     public float Max => _max;
-    
+    public void ScaleMaxHealth(float mult) { _max *= mult; Current = _max; }
+
+
     private void Awake()
     {
         Current = _max;
